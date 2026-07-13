@@ -22,12 +22,33 @@
    "unique": 1
   },
   {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Linked Supplier",
+   "options": "Supplier",
+   "description": "Link to ERPNext Supplier master"
+  },
+  {
+   "fieldname": "contractor_type",
+   "fieldtype": "Select",
+   "label": "Contractor Type",
+   "options": "Cutting\nStitching\nDyeing\nEmbroidery\nFinishing",
+   "reqd": 1
+  },
+  {
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
    "options": "Active\nInactive",
    "default": "Active",
    "reqd": 1
+  },
+  {
+   "fieldname": "default_wastage_allowance_pct",
+   "fieldtype": "Percent",
+   "label": "Default Wastage Allowance (%)",
+   "default": 2.0,
+   "description": "Default allowable wastage percentage for this contractor"
   },
   {
    "fieldname": "contact_details",
@@ -49,6 +70,18 @@
    "fieldname": "address",
    "fieldtype": "Small Text",
    "label": "Address"
+  },
+  {
+   "fieldname": "rate_card_section",
+   "fieldtype": "Section Break",
+   "label": "Rate Card"
+  },
+  {
+   "fieldname": "rate_card",
+   "fieldtype": "Table",
+   "label": "Rate Card",
+   "options": "Contractor Rate Item",
+   "description": "Process-wise rates for this contractor"
   },
   {
    "fieldname": "wastage_analytics",
@@ -93,6 +126,19 @@
    "amend": 0,
    "cancel": 0,
    "submit": 0,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
    "email": 1,
    "print": 1,
    "import": 1,

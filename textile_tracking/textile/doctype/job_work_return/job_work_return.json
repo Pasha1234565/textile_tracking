@@ -1,0 +1,57 @@
+{
+ "doctype": "DocType",
+ "name": "Job Work Return",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 1,
+ "is_single": 0,
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "date_received",
+   "fieldtype": "Date",
+   "label": "Date Received",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "qty_received",
+   "fieldtype": "Float",
+   "label": "Qty Received",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "qty_rejected",
+   "fieldtype": "Float",
+   "label": "Qty Rejected",
+   "in_list_view": 1,
+   "columns": 2,
+   "description": "Quantity received but rejected due to quality issues"
+  },
+  {
+   "fieldname": "wastage_qty",
+   "fieldtype": "Float",
+   "label": "Wastage Qty",
+   "in_list_view": 1,
+   "columns": 2,
+   "description": "Quantity wasted during processing"
+  },
+  {
+   "fieldname": "wastage_reason",
+   "fieldtype": "Small Text",
+   "label": "Wastage Reason",
+   "columns": 2
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

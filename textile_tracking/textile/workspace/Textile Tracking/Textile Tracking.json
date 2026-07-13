@@ -7,7 +7,7 @@
  "public": 1,
  "label": "Textile Tracking",
  "icon": "industry",
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Shortcuts\"}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fabric Wastage Log\",\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"doc_view\":\"List\",\"icon\":\"list\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contractor Wastage Trend\",\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"doc_view\":null,\"icon\":\"chart\",\"onboard\":1}},{\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"label\":\"Fabric Wastage Log\",\"description\":\"Track fabric wastage entries logged daily\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Contractor\",\"label\":\"Contractor\",\"description\":\"Manage contractor details and profiles\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Analytics\",\"col\":4,\"items\":[{\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"label\":\"Contractor Wastage Trend\",\"description\":\"Analyze wastage percentage trends across contractors over time\",\"is_query_report\":1,\"onboard\":1}]}},{\"type\":\"spacer\",\"data\":{}},{\"type\":\"header\",\"data\":{\"text\":\"Wastage Trends\"}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Wastage Trend Overview\",\"label\":\"Wastage Trend Overview\",\"chart_type\":\"Report\",\"report_name\":\"Contractor Wastage Trend\",\"width\":\"Full\"}}]",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Shortcuts\"}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Job Work Order\",\"type\":\"DocType\",\"link_to\":\"Job Work Order\",\"doc_view\":\"New\",\"icon\":\"product\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fabric Wastage Log\",\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"doc_view\":\"List\",\"icon\":\"list\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contractor Wastage Trend\",\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"icon\":\"chart\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Overdue Orders\",\"type\":\"Report\",\"link_to\":\"Overdue Job Work Orders\",\"icon\":\"warning\",\"onboard\":1}},{\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Job Work Order\",\"label\":\"Job Work Order\",\"description\":\"Create and manage job work orders sent to contractors\",\"onboard\":1},{\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"label\":\"Fabric Wastage Log\",\"description\":\"Track fabric wastage entries logged daily\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Contractor\",\"label\":\"Contractor\",\"description\":\"Manage contractor details, rate cards, and profiles\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4,\"items\":[{\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"label\":\"Contractor Wastage % Trend\",\"description\":\"Analyze wastage percentage trends across contractors over time\",\"is_query_report\":1,\"onboard\":1},{\"type\":\"Report\",\"link_to\":\"True Cost Per Piece by Contractor\",\"label\":\"True Cost Per Piece\",\"description\":\"View true landed cost per piece including wastage adjustment\",\"is_query_report\":1,\"onboard\":1},{\"type\":\"Report\",\"link_to\":\"Overdue Job Work Orders\",\"label\":\"Overdue Orders\",\"description\":\"View job work orders past expected return date\",\"is_query_report\":1,\"onboard\":1}]}},{\"type\":\"spacer\",\"data\":{}},{\"type\":\"header\",\"data\":{\"text\":\"Wastage Trends\"}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Wastage Trend Overview\",\"label\":\"Wastage Trend Overview\",\"chart_type\":\"Report\",\"report_name\":\"Contractor Wastage Trend\",\"width\":\"Full\"}}]",
  "charts": [
   {
    "chart_name": "Wastage Trend Overview",
@@ -19,6 +19,16 @@
   }
  ],
  "shortcuts": [
+  {
+   "label": "New Job Work Order",
+   "type": "DocType",
+   "link_to": "Job Work Order",
+   "doc_view": "New",
+   "icon": "product",
+   "kanban_board": "",
+   "dependencies": "",
+   "onboard": 1
+  },
   {
    "label": "Fabric Wastage Log",
    "type": "DocType",
@@ -35,6 +45,16 @@
    "link_to": "Contractor Wastage Trend",
    "doc_view": "",
    "icon": "chart",
+   "kanban_board": "",
+   "dependencies": "",
+   "onboard": 1
+  },
+  {
+   "label": "Overdue Orders",
+   "type": "Report",
+   "link_to": "Overdue Job Work Orders",
+   "doc_view": "",
+   "icon": "warning",
    "kanban_board": "",
    "dependencies": "",
    "onboard": 1

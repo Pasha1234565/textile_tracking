@@ -1,0 +1,15 @@
+{
+ "doctype": "Report",
+ "name": "Overdue Job Work Orders",
+ "module": "Textile",
+ "is_standard": "Yes",
+ "report_type": "Query Report",
+ "query": "SELECT\n\tjwo.name as \"Job Work Order:Link/Job Work Order:180\",\n\tjwo.contractor as \"Contractor:Link/Contractor:150\",\n\tjwo.source_item as \"Source Item:Link/Item:150\",\n\tjwo.qty_sent as \"Qty Sent:Float:100\",\n\tjwo.process as \"Process::120\",\n\tjwo.date_sent as \"Date Sent:Date:100\",\n\tjwo.expected_return_date as \"Expected Return:Date:130\",\n\tDATEDIFF(CURDATE(), jwo.expected_return_date) as \"Days Overdue:Int:100\",\n\tjwo.status as \"Status::120\"\nFROM `tabJob Work Order` jwo\nWHERE jwo.status NOT IN ('Received', 'Closed')\n\tAND jwo.expected_return_date < CURDATE()\nORDER BY jwo.expected_return_date ASC",
+ "ref_doctype": "Job Work Order",
+ "filters": [],
+ "add_totals_row": 0,
+ "fields": [],
+ "sort_by": "expected_return_date",
+ "sort_order": "ASC",
+ "disabled": 0
+}

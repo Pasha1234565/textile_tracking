@@ -1,0 +1,214 @@
+{
+ "doctype": "DocType",
+ "name": "Job Work Order",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 1,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "JWO-.YYYY.-.####",
+ "title_field": "contractor",
+ "track_changes": 1,
+ "track_views": 1,
+ "workflow": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "JWO-.YYYY.-.####",
+   "default": "JWO-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "contractor",
+   "fieldtype": "Link",
+   "label": "Contractor",
+   "options": "Contractor",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "source_item",
+   "fieldtype": "Link",
+   "label": "Source Item",
+   "options": "Item",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "The fabric or garment being sent out for processing"
+  },
+  {
+   "fieldname": "qty_sent",
+   "fieldtype": "Float",
+   "label": "Qty Sent",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "process",
+   "fieldtype": "Select",
+   "label": "Process",
+   "options": "Cutting\nStitching\nDyeing\nEmbroidery\nFinishing",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "rate_per_piece",
+   "fieldtype": "Currency",
+   "label": "Rate Per Piece",
+   "read_only": 0,
+   "description": "Rate per piece from contractor rate card, entered or auto-matched"
+  },
+  {
+   "fieldname": "section_break_dates",
+   "fieldtype": "Section Break",
+   "label": "Dates"
+  },
+  {
+   "fieldname": "date_sent",
+   "fieldtype": "Date",
+   "label": "Date Sent",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_dates",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expected_return_date",
+   "fieldtype": "Date",
+   "label": "Expected Return Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nSent\nPartially Received\nReceived\nClosed",
+   "default": "Draft",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_returns",
+   "fieldtype": "Section Break",
+   "label": "Returns"
+  },
+  {
+   "fieldname": "job_work_returns",
+   "fieldtype": "Table",
+   "label": "Job Work Returns",
+   "options": "Job Work Return"
+  },
+  {
+   "fieldname": "section_break_accounting",
+   "fieldtype": "Section Break",
+   "label": "Costing Summary",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "total_received_qty",
+   "fieldtype": "Float",
+   "label": "Total Received Qty",
+   "read_only": 1,
+   "description": "Auto-calculated from returns"
+  },
+  {
+   "fieldname": "column_break_costing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_wastage_qty",
+   "fieldtype": "Float",
+   "label": "Total Wastage Qty",
+   "read_only": 1,
+   "description": "Auto-calculated from returns"
+  },
+  {
+   "fieldname": "stock_entry_sent",
+   "fieldtype": "Link",
+   "label": "Stock Entry (Sent)",
+   "options": "Stock Entry",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "stock_entry_received",
+   "fieldtype": "Link",
+   "label": "Stock Entry (Received)",
+   "options": "Stock Entry",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Job Work Order",
+   "no_copy": 1,
+   "hidden": 1,
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 1,
+   "cancel": 1,
+   "submit": 1,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 1,
+   "cancel": 1,
+   "submit": 1,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Contractor Coordinator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

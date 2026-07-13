@@ -13,6 +13,7 @@
  "autoname": "naming_series:",
  "naming_series": "FWL-.YYYY.-.####",
  "title_field": "contractor",
+ "track_changes": 1,
  "fields": [
   {
    "fieldname": "naming_series",
@@ -20,7 +21,18 @@
    "label": "Series",
    "options": "FWL-.YYYY.-.####",
    "default": "FWL-.YYYY.-.####",
-   "reqd": 1
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "job_work_order",
+   "fieldtype": "Link",
+   "label": "Job Work Order",
+   "options": "Job Work Order",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "description": "Link to the Job Work Order that generated this wastage"
   },
   {
    "fieldname": "contractor",
@@ -67,6 +79,24 @@
    "description": "Quantity of fabric wasted"
   },
   {
+   "fieldname": "wastage_pct",
+   "fieldtype": "Percent",
+   "label": "Wastage %",
+   "read_only": 1,
+   "in_list_view": 1,
+   "description": "Computed: (Wastage Qty / Qty Sent) × 100"
+  },
+  {
+   "fieldname": "wastage_category",
+   "fieldtype": "Select",
+   "label": "Wastage Category",
+   "options": "Cutting Loss\nContractor Damage\nTransit Damage\nQuality Reject",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Categorize the cause of wastage for accountability"
+  },
+  {
    "fieldname": "section_break_additional",
    "fieldtype": "Section Break",
    "label": "Additional Info"
@@ -95,11 +125,36 @@
    "share": 1
   },
   {
+   "role": "Job Work Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 0,
+   "cancel": 0,
+   "submit": 0,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Contractor Coordinator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
    "role": "All",
    "read": 1
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC",
- "track_changes": 1
+ "sort_order": "DESC"
 }
