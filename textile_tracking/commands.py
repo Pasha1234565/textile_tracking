@@ -91,12 +91,10 @@ def _create_demo_contractors():
 			continue
 
 		rates = data.pop("rates")
-		doc = frappe.get_doc({"doctype": "Job Contractor", **data})
+		# Pass child table data directly on creation to avoid missing 'parent' column issues
+		doc_data = {"doctype": "Job Contractor", **data, "rate_card": rates}
+		doc = frappe.get_doc(doc_data)
 		doc.insert(ignore_permissions=True)
-
-		for rate in rates:
-			doc.append("rate_card", rate)
-		doc.save()
 		created.append(name)
 		print(f"  ✅ Created Job Contractor: {name}")
 
