@@ -1,0 +1,111 @@
+{
+ "doctype": "DocType",
+ "name": "Contractor",
+ "module": "Textile Tracking",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "field:contractor_name",
+ "show_title_field_in_link": 1,
+ "title_field": "contractor_name",
+ "fields": [
+  {
+   "fieldname": "contractor_name",
+   "fieldtype": "Data",
+   "label": "Contractor Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nInactive",
+   "default": "Active",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_details",
+   "fieldtype": "Section Break",
+   "label": "Contact Details"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "wastage_analytics",
+   "fieldtype": "Section Break",
+   "label": "Wastage Analytics"
+  },
+  {
+   "fieldname": "total_qty_sent",
+   "fieldtype": "Float",
+   "label": "Total Qty Sent",
+   "read_only": 1,
+   "description": "Aggregated from Fabric Wastage Log via daily scheduler"
+  },
+  {
+   "fieldname": "total_wastage_qty",
+   "fieldtype": "Float",
+   "label": "Total Wastage Qty",
+   "read_only": 1,
+   "description": "Aggregated from Fabric Wastage Log via daily scheduler"
+  },
+  {
+   "fieldname": "wastage_percentage",
+   "fieldtype": "Percent",
+   "label": "Overall Wastage %",
+   "read_only": 1,
+   "description": "(Total Wastage / Total Sent) × 100"
+  },
+  {
+   "fieldname": "last_updated",
+   "fieldtype": "Date",
+   "label": "Last Updated",
+   "read_only": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 0,
+   "cancel": 0,
+   "submit": 0,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

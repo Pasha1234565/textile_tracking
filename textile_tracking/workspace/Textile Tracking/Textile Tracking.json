@@ -1,0 +1,55 @@
+{
+ "doctype": "Workspace",
+ "workspace_name": "Textile Tracking",
+ "module": "Textile Tracking",
+ "is_standard": 1,
+ "public": 1,
+ "label": "Textile Tracking",
+ "icon": "industry",
+ "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Shortcuts\"}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fabric Wastage Log\",\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"doc_view\":\"List\",\"icon\":\"list\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Contractor Wastage Trend\",\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"doc_view\":null,\"icon\":\"chart\",\"onboard\":1}},{\"type\":\"card\",\"data\":{\"card_name\":\"Transactions\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Fabric Wastage Log\",\"label\":\"Fabric Wastage Log\",\"description\":\"Track fabric wastage entries logged daily\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Master Data\",\"col\":4,\"items\":[{\"type\":\"DocType\",\"link_to\":\"Contractor\",\"label\":\"Contractor\",\"description\":\"Manage contractor details and profiles\",\"onboard\":1}]}},{\"type\":\"card\",\"data\":{\"card_name\":\"Analytics\",\"col\":4,\"items\":[{\"type\":\"Report\",\"link_to\":\"Contractor Wastage Trend\",\"label\":\"Contractor Wastage Trend\",\"description\":\"Analyze wastage percentage trends across contractors over time\",\"is_query_report\":1,\"onboard\":1}]}},{\"type\":\"spacer\",\"data\":{}},{\"type\":\"header\",\"data\":{\"text\":\"Wastage Trends\"}},{\"type\":\"chart\",\"data\":{\"chart_name\":\"Wastage Trend Overview\",\"label\":\"Wastage Trend Overview\",\"chart_type\":\"Report\",\"report_name\":\"Contractor Wastage Trend\",\"width\":\"Full\"}}]",
+ "charts": [
+  {
+   "chart_name": "Wastage Trend Overview",
+   "label": "Wastage Trend Overview",
+   "chart_type": "Report",
+   "report_name": "Contractor Wastage Trend",
+   "is_public": 1,
+   "width": "Full"
+  }
+ ],
+ "shortcuts": [
+  {
+   "label": "Fabric Wastage Log",
+   "type": "DocType",
+   "link_to": "Fabric Wastage Log",
+   "doc_view": "List",
+   "icon": "list",
+   "kanban_board": "",
+   "dependencies": "",
+   "onboard": 1
+  },
+  {
+   "label": "Contractor Wastage Trend",
+   "type": "Report",
+   "link_to": "Contractor Wastage Trend",
+   "doc_view": "",
+   "icon": "chart",
+   "kanban_board": "",
+   "dependencies": "",
+   "onboard": 1
+  },
+  {
+   "label": "Contractor",
+   "type": "DocType",
+   "link_to": "Contractor",
+   "doc_view": "List",
+   "icon": "user",
+   "kanban_board": "",
+   "dependencies": "",
+   "onboard": 0
+  }
+ ],
+ "links": [],
+ "number_cards": [],
+ "custom_blocks": []
+}
