@@ -15,7 +15,7 @@ def execute(filters=None):
 def get_columns():
 	return [
 		{"label": _("Contractor"), "fieldname": "contractor", "fieldtype": "Link", "options": "Contractor", "width": 180},
-		{"label": _("Process"), "fieldname": "process", "fieldtype": "Data", "width": 120},
+		{"label": _("Subcontract Process"), "fieldname": "subcontract_process", "fieldtype": "Data", "width": 150},
 		{"label": _("Total Qty Sent"), "fieldname": "total_qty_sent", "fieldtype": "Float", "width": 120},
 		{"label": _("Total Qty Received"), "fieldname": "total_qty_received", "fieldtype": "Float", "width": 130},
 		{"label": _("Total Wastage Qty"), "fieldname": "total_wastage_qty", "fieldtype": "Float", "width": 130},
@@ -49,16 +49,16 @@ def get_data(filters):
 	raw_data = frappe.db.sql(f"""
 		SELECT
 			jwo.contractor,
-			jwo.process,
+			jwo.subcontract_process,
 			SUM(jwo.qty_sent) as total_qty_sent,
 			COALESCE(SUM(jwr.qty_received), 0) as total_qty_received,
 			COALESCE(SUM(jwr.wastage_qty), 0) as total_wastage_qty,
 			COALESCE(cri.rate_per_piece, 0) as rate_per_piece
 		FROM `tabJob Work Order` jwo
 		LEFT JOIN `tabJob Work Return` jwr ON jwr.parent = jwo.name AND jwr.parenttype = 'Job Work Order'
-		LEFT JOIN `tabContractor Rate Item` cri ON cri.parent = jwo.contractor AND cri.parenttype = 'Contractor' AND cri.process = jwo.process
+		LEFT JOIN `tabContractor Rate Item` cri ON cri.parent = jwo.contractor AND cri.parenttype = 'Contractor' AND cri.subcontract_process = jwo.subcontract_process
 		WHERE {where_clause}
-		GROUP BY jwo.contractor, jwo.process
+		GROUP BY jwo.contractor, jwo.subcontract_process
 		ORDER BY jwo.contractor
 	""", params, as_dict=True)
 
@@ -84,7 +84,7 @@ def get_data(filters):
 
 		data.append({
 			"contractor": row.contractor,
-			"process": row.process,
+			"subcontract_process": row.subcontract_process,
 			"total_qty_sent": row.total_qty_sent,
 			"total_qty_received": qty_received,
 			"total_wastage_qty": wastage_qty,

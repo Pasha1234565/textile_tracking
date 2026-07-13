@@ -16,7 +16,7 @@ def create_subcontract_transfer(job_work_order):
 		stock_entry.posting_date = nowdate()
 		stock_entry.remarks = frappe._(
 			"Job Work Transfer: {0} to {1} for process {2}"
-		).format(job_work_order.name, job_work_order.contractor, job_work_order.process)
+		).format(job_work_order.name, job_work_order.contractor, job_work_order.subcontract_process)
 
 		# Default source warehouse — uses the company's default warehouse
 		source_warehouse = frappe.db.get_single_value(
