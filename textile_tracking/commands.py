@@ -96,6 +96,9 @@ def _create_demo_contractors_sql():
 		""", {**c, "now": now})
 		print(f"  ✅ Created Contractor: {c['name']}")
 
+	# Commit contractors first so they survive any subsequent transaction failure
+	frappe.db.commit()
+
 	# Try to add rate card items (may fail if child table is incomplete from migration)
 	try:
 		rates = [
@@ -125,8 +128,10 @@ def _create_demo_contractors_sql():
 				"eff_date": eff_date,
 				"now": now,
 			})
+		frappe.db.commit()
 		print("  ✅ Added rate card items")
 	except Exception as e:
+		frappe.db.rollback()  # Required to clear MySQL aborted transaction state
 		print(f"  ⚠️  Rate cards skipped (child table needs repair): {e}")
 
 
