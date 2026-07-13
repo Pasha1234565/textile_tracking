@@ -62,7 +62,7 @@
   {
    "label": "Contractor",
    "type": "DocType",
-   "link_to": "Contractor",
+   "link_to": "Job Contractor",
    "doc_view": "List",
    "icon": "user",
    "kanban_board": "",

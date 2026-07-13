@@ -14,7 +14,7 @@ def daily_update_contractor_wastage_stats():
 	Runs once per day and updates every active contractor's aggregated
 	wastage fields from all Fabric Wastage Log records.
 	"""
-	contractors = frappe.db.get_all("Contractor", filters={"status": "Active"}, pluck="name")
+	contractors = frappe.db.get_all("Job Contractor", filters={"status": "Active"}, pluck="name")
 
 	for name in contractors:
 		update_contractor_wastage_stats(name)
@@ -90,7 +90,7 @@ def daily_notify_rate_card_expiring():
 			rate.effective_from,
 			rate.rate_per_piece
 		)
-		notification.document_type = "Contractor"
+		notification.document_type = "Job Contractor"
 		notification.document_name = rate.contractor
 		notification.insert(ignore_permissions=True)
 

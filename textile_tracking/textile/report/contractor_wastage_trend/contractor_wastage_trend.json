@@ -4,7 +4,7 @@
  "module": "Textile",
  "is_standard": "Yes",
  "report_type": "Query Report",
- "query": "SELECT\n\tcon.name as contractor,\n\tMONTHNAME(fwl.date_logged) as month,\n\tSUM(fwl.qty_sent) as qty_sent,\n\tSUM(fwl.wastage_qty) as wastage_qty,\n\tROUND((SUM(fwl.wastage_qty) / NULLIF(SUM(fwl.qty_sent), 0)) * 100, 2) as wastage_pct\nFROM `tabFabric Wastage Log` fwl\nJOIN `tabContractor` con ON con.name = fwl.contractor\nGROUP BY con.name, MONTH(fwl.date_logged)\nORDER BY fwl.date_logged DESC",
+ "query": "SELECT\n\tcon.name as contractor,\n\tMONTHNAME(fwl.date_logged) as month,\n\tSUM(fwl.qty_sent) as qty_sent,\n\tSUM(fwl.wastage_qty) as wastage_qty,\n\tROUND((SUM(fwl.wastage_qty) / NULLIF(SUM(fwl.qty_sent), 0)) * 100, 2) as wastage_pct\nFROM `tabFabric Wastage Log` fwl\nJOIN `tabJob Contractor` con ON con.name = fwl.contractor\nGROUP BY con.name, MONTH(fwl.date_logged)\nORDER BY fwl.date_logged DESC",
  "ref_doctype": "Fabric Wastage Log",
  "chart_options": "{\"type\": \"Line\", \"title\": \"Contractor Wastage Trend\", \"x_field\": \"month\", \"y_fields\": [\"wastage_pct\"], \"filters\": []}",
  "filters": [],

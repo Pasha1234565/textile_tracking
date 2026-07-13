@@ -85,13 +85,13 @@ def _create_demo_contractors():
 	created = []
 	for data in contractors_data:
 		name = data["name"]
-		if frappe.db.exists("Contractor", name):
-			print(f"  ⏩ Contractor '{name}' already exists — skipping")
+		if frappe.db.exists("Job Contractor", name):
+			print(f"  ⏩ Job Contractor '{name}' already exists — skipping")
 			created.append(name)
 			continue
 
 		rates = data.pop("rates")
-		doc = frappe.get_doc({"doctype": "Contractor", **data})
+		doc = frappe.get_doc({"doctype": "Job Contractor", **data})
 		doc.insert(ignore_permissions=True)
 
 		for rate in rates:

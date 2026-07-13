@@ -1,6 +1,6 @@
 {
  "doctype": "DocType",
- "name": "Contractor",
+ "name": "Job Contractor",
  "module": "Textile",
  "is_custom": 0,
  "is_submittable": 0,

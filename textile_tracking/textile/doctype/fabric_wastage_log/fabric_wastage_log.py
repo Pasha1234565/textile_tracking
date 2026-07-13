@@ -62,7 +62,7 @@ def update_contractor_wastage_stats(contractor_name):
 	if total_qty_sent > 0:
 		wastage_pct = round((total_wastage_qty / total_qty_sent) * 100, 2)
 
-	frappe.db.set_value("Contractor", contractor_name, {
+	frappe.db.set_value("Job Contractor", contractor_name, {
 		"total_qty_sent": total_qty_sent,
 		"total_wastage_qty": total_wastage_qty,
 		"wastage_percentage": wastage_pct,

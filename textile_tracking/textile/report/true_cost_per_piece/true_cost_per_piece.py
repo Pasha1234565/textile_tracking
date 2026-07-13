@@ -14,7 +14,7 @@ def execute(filters=None):
 
 def get_columns():
 	return [
-		{"label": _("Contractor"), "fieldname": "contractor", "fieldtype": "Link", "options": "Contractor", "width": 180},
+		{"label": _("Job Contractor"), "fieldname": "contractor", "fieldtype": "Link", "options": "Job Contractor", "width": 180},
 		{"label": _("Subcontract Process"), "fieldname": "subcontract_process", "fieldtype": "Data", "width": 150},
 		{"label": _("Total Qty Sent"), "fieldname": "total_qty_sent", "fieldtype": "Float", "width": 120},
 		{"label": _("Total Qty Received"), "fieldname": "total_qty_received", "fieldtype": "Float", "width": 130},

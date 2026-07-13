@@ -3,7 +3,7 @@ import frappe
 
 def execute(filters=None):
 	columns = [
-		{"label": "Contractor", "fieldname": "contractor", "fieldtype": "Link", "options": "Contractor", "width": 180},
+		{"label": "Job Contractor", "fieldname": "contractor", "fieldtype": "Link", "options": "Job Contractor", "width": 180},
 		{"label": "Month", "fieldname": "month", "fieldtype": "Data", "width": 100},
 		{"label": "Qty Sent", "fieldname": "qty_sent", "fieldtype": "Float", "width": 120},
 		{"label": "Wastage Qty", "fieldname": "wastage_qty", "fieldtype": "Float", "width": 120},
@@ -18,7 +18,7 @@ def execute(filters=None):
 			SUM(fwl.wastage_qty) as wastage_qty,
 			ROUND((SUM(fwl.wastage_qty) / NULLIF(SUM(fwl.qty_sent), 0)) * 100, 2) as wastage_pct
 		FROM `tabFabric Wastage Log` fwl
-		JOIN `tabContractor` con ON con.name = fwl.contractor
+		JOIN `tabJob Contractor` con ON con.name = fwl.contractor
 		GROUP BY con.name, DATE_FORMAT(fwl.date_logged, '%Y-%m')
 		ORDER BY fwl.date_logged DESC
 	""", as_dict=True)
