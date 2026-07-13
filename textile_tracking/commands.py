@@ -11,10 +11,14 @@ def insert_demo_data():
 		bench --site mysite.localhost execute textile_tracking.commands.insert_demo_data
 	"""
 	_contractors = _create_demo_contractors()
-	_jwos = _create_demo_job_work_orders(_contractors)
-	_create_demo_fabric_wastage_logs(_jwos)
-
 	frappe.db.commit()
+
+	_jwos = _create_demo_job_work_orders(_contractors)
+	frappe.db.commit()
+
+	_create_demo_fabric_wastage_logs(_jwos)
+	frappe.db.commit()
+
 	print("✅ Demo data inserted successfully!")
 
 
