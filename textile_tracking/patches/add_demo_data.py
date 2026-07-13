@@ -91,14 +91,40 @@ def create_demo_contractors():
 		print(f"Created Contractor: {doc.name}")
 
 
+def get_or_create_demo_item():
+	"""Create a demo Item if it doesn't exist, return its name."""
+	item_name = "Cotton Fabric - Demo"
+	if frappe.db.exists("Item", item_name):
+		return item_name
+
+	# Only create if Item doctype is available (requires ERPNext or similar)
+	if frappe.db.exists("DocType", "Item"):
+		try:
+			item = frappe.get_doc({
+				"doctype": "Item",
+				"item_code": item_name,
+				"item_name": "Cotton Fabric (Demo)",
+				"item_group": "Raw Material",
+				"stock_uom": "Meter",
+				"is_stock_item": 1,
+			})
+			item.insert(ignore_permissions=True)
+			print(f"Created demo Item: {item_name}")
+			return item_name
+		except Exception as e:
+			print(f"Could not create demo Item: {e}")
+	return None
+
+
 def create_demo_job_work_orders():
 	"""Create demo Job Work Orders with varied statuses."""
 	contractors = frappe.db.get_all("Contractor", pluck="name")
+	demo_item = get_or_create_demo_item()
 
 	jwo_data = [
 		{
 			"contractor": contractors[0],
-			"source_item": "Cotton Fabric - Test",
+			"source_item": demo_item,
 			"qty_sent": 500,
 			"subcontract_process": "Stitching",
 			"rate_per_piece": 15.00,
@@ -108,7 +134,7 @@ def create_demo_job_work_orders():
 		},
 		{
 			"contractor": contractors[1],
-			"source_item": "Cotton Fabric - Test",
+			"source_item": demo_item,
 			"qty_sent": 300,
 			"subcontract_process": "Cutting",
 			"rate_per_piece": 8.00,
@@ -121,7 +147,7 @@ def create_demo_job_work_orders():
 		},
 		{
 			"contractor": contractors[2],
-			"source_item": "Cotton Fabric - Test",
+			"source_item": demo_item,
 			"qty_sent": 200,
 			"subcontract_process": "Dyeing",
 			"rate_per_piece": 12.00,
@@ -134,7 +160,7 @@ def create_demo_job_work_orders():
 		},
 		{
 			"contractor": contractors[3],
-			"source_item": "Cotton Fabric - Test",
+			"source_item": demo_item,
 			"qty_sent": 150,
 			"subcontract_process": "Embroidery",
 			"rate_per_piece": 25.00,
@@ -144,7 +170,7 @@ def create_demo_job_work_orders():
 		},
 		{
 			"contractor": contractors[4],
-			"source_item": "Cotton Fabric - Test",
+			"source_item": demo_item,
 			"qty_sent": 400,
 			"subcontract_process": "Finishing",
 			"rate_per_piece": 5.00,
@@ -168,12 +194,17 @@ def create_demo_job_work_orders():
 			doc.save()
 			print(f"Created Job Work Order: {doc.name}")
 		except Exception as e:
-			print(f"Skipping Job Work Order ({jwo.get('contractor')}): {str(e)[:80]}")
+			frappe.log_error(frappe.get_traceback(), f"Demo JWO creation failed for {jwo.get('contractor')}")
+			print(f"Skipping Job Work Order ({jwo.get('contractor')}): {str(e)[:100]}")
 
 
 def create_demo_fabric_wastage_logs():
 	"""Create demo Fabric Wastage Log entries linked to JWO returns."""
 	jwos = frappe.db.get_all("Job Work Order", pluck="name", limit=3)
+
+	if not jwos:
+		print("No Job Work Orders found, skipping Fabric Wastage Log demo data")
+		return
 
 	fwl_data = [
 		{
@@ -211,4 +242,5 @@ def create_demo_fabric_wastage_logs():
 			doc.insert(ignore_permissions=True)
 			print(f"Created Fabric Wastage Log: {doc.name}")
 		except Exception as e:
-			print(f"Skipping Fabric Wastage Log: {str(e)[:80]}")
+			frappe.log_error(frappe.get_traceback(), f"Demo FWL creation failed")
+			print(f"Skipping Fabric Wastage Log: {str(e)[:100]}")

@@ -41,7 +41,6 @@
    "fieldtype": "Link",
    "label": "Source Item",
    "options": "Item",
-   "reqd": 1,
    "in_list_view": 1,
    "description": "The fabric or garment being sent out for processing"
   },
