@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import frappe
 
-from textile_tracking.doctype.fabric_wastage_log.fabric_wastage_log import (
+from textile_tracking.textile.doctype.fabric_wastage_log.fabric_wastage_log import (
 	update_contractor_wastage_stats,
 )
 

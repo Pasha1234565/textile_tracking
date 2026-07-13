@@ -33,7 +33,7 @@ fixtures = [
 # ------------------------------
 scheduler_events = {
 	"daily": [
-		"textile_tracking.tasks.daily_update_contractor_wastage_stats"
+		"textile_tracking.textile.tasks.daily_update_contractor_wastage_stats"
 	]
 }
 
