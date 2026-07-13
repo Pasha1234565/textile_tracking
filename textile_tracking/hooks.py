@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 app_name = "textile_tracking"
-app_title = "Textile Tracking"
+app_title = "Textile"
 app_publisher = "Your Company"
 app_description = "Textile Tracking Application"
 app_icon = "octicon octicon-file-directory"
@@ -15,9 +15,9 @@ app_license = "MIT"
 # Fixtures
 # ------------------------------
 fixtures = [
-	{"dt": "Workspace", "filters": [["module", "=", "Textile Tracking"]]},
-	{"dt": "DocType", "filters": [["module", "=", "Textile Tracking"]]},
-	{"dt": "Report", "filters": [["module", "=", "Textile Tracking"]]}
+	{"dt": "Workspace", "filters": [["module", "=", "Textile"]]},
+	{"dt": "DocType", "filters": [["module", "=", "Textile"]]},
+	{"dt": "Report", "filters": [["module", "=", "Textile"]]}
 ]
 
 # DocType Class
