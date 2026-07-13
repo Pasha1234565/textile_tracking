@@ -96,34 +96,38 @@ def _create_demo_contractors_sql():
 		""", {**c, "now": now})
 		print(f"  ✅ Created Contractor: {c['name']}")
 
-	# Insert rate card items
-	rates = [
-		("Kashmir Stitching Works", "Stitching", 15.00, add_days(today_date, -60)),
-		("Raj Cutting Services", "Cutting", 8.00, add_days(today_date, -90)),
-		("Sara Dyeing House", "Dyeing", 12.00, add_days(today_date, -45)),
-		("Punjab Embroidery", "Embroidery", 25.00, add_days(today_date, -30)),
-		("Finishing Masters", "Finishing", 5.00, add_days(today_date, -120)),
-	]
+	# Try to add rate card items (may fail if child table is incomplete from migration)
+	try:
+		rates = [
+			("Kashmir Stitching Works", "Stitching", 15.00, add_days(today_date, -60)),
+			("Raj Cutting Services", "Cutting", 8.00, add_days(today_date, -90)),
+			("Sara Dyeing House", "Dyeing", 12.00, add_days(today_date, -45)),
+			("Punjab Embroidery", "Embroidery", 25.00, add_days(today_date, -30)),
+			("Finishing Masters", "Finishing", 5.00, add_days(today_date, -120)),
+		]
 
-	for idx, (contractor, process, rate, eff_date) in enumerate(rates, 1):
-		frappe.db.sql("""
-			INSERT INTO `tabContractor Rate Item`
-				(name, parent, parenttype, parentfield, idx,
-				 subcontract_process, rate_per_piece, effective_from,
-				 creation, modified, modified_by, owner, docstatus)
-			VALUES
-				(%(name)s, %(parent)s, 'Job Contractor', 'rate_card', %(idx)s,
-				 %(process)s, %(rate)s, %(eff_date)s,
-				 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
-		""", {
-			"name": frappe.generate_hash("", 10),
-			"parent": contractor,
-			"idx": idx,
-			"process": process,
-			"rate": rate,
-			"eff_date": eff_date,
-			"now": now,
-		})
+		for idx, (contractor, process, rate, eff_date) in enumerate(rates, 1):
+			frappe.db.sql("""
+				INSERT INTO `tabContractor Rate Item`
+					(name, parent, parenttype, parentfield, idx,
+					 subcontract_process, rate_per_piece, effective_from,
+					 creation, modified, modified_by, owner, docstatus)
+				VALUES
+					(%(name)s, %(parent)s, 'Job Contractor', 'rate_card', %(idx)s,
+					 %(process)s, %(rate)s, %(eff_date)s,
+					 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
+			""", {
+				"name": frappe.generate_hash("", 10),
+				"parent": contractor,
+				"idx": idx,
+				"process": process,
+				"rate": rate,
+				"eff_date": eff_date,
+				"now": now,
+			})
+		print("  ✅ Added rate card items")
+	except Exception as e:
+		print(f"  ⚠️  Rate cards skipped (child table needs repair): {e}")
 
 
 def _create_demo_jwo_sql():
