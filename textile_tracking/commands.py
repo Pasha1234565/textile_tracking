@@ -26,7 +26,7 @@ def _create_demo_contractors():
 	"""Create demo contractors with rate cards."""
 	contractors_data = [
 		{
-			"name": "Kashmir Stitching Works",
+			"contractor_name": "Kashmir Stitching Works",
 			"contractor_type": "Stitching",
 			"status": "Active",
 			"default_wastage_allowance_pct": 2.0,
@@ -37,7 +37,7 @@ def _create_demo_contractors():
 			],
 		},
 		{
-			"name": "Raj Cutting Services",
+			"contractor_name": "Raj Cutting Services",
 			"contractor_type": "Cutting",
 			"status": "Active",
 			"default_wastage_allowance_pct": 1.5,
@@ -48,7 +48,7 @@ def _create_demo_contractors():
 			],
 		},
 		{
-			"name": "Sara Dyeing House",
+			"contractor_name": "Sara Dyeing House",
 			"contractor_type": "Dyeing",
 			"status": "Active",
 			"default_wastage_allowance_pct": 3.0,
@@ -59,7 +59,7 @@ def _create_demo_contractors():
 			],
 		},
 		{
-			"name": "Punjab Embroidery",
+			"contractor_name": "Punjab Embroidery",
 			"contractor_type": "Embroidery",
 			"status": "Active",
 			"default_wastage_allowance_pct": 2.5,
@@ -70,7 +70,7 @@ def _create_demo_contractors():
 			],
 		},
 		{
-			"name": "Finishing Masters",
+			"contractor_name": "Finishing Masters",
 			"contractor_type": "Finishing",
 			"status": "Active",
 			"default_wastage_allowance_pct": 1.0,
@@ -84,7 +84,7 @@ def _create_demo_contractors():
 
 	created = []
 	for data in contractors_data:
-		name = data["name"]
+		name = data["contractor_name"]
 		if frappe.db.exists("Job Contractor", name):
 			print(f"  ⏩ Job Contractor '{name}' already exists — skipping")
 			created.append(name)
@@ -98,7 +98,7 @@ def _create_demo_contractors():
 			doc.append("rate_card", rate)
 		doc.save()
 		created.append(name)
-		print(f"  ✅ Created Contractor: {name}")
+		print(f"  ✅ Created Job Contractor: {name}")
 
 	return created
 
