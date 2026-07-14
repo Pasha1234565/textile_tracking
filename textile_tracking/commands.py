@@ -1,7 +1,19 @@
 from __future__ import unicode_literals
 
+import click
+
 import frappe
 from frappe.utils import today, add_days, now_datetime
+
+
+@click.command("insert-demo-data")
+def insert_demo_data_command():
+	"""Insert demo data for Textile Tracking app.
+
+	Usage:
+		bench --site [site] insert-demo-data
+	"""
+	insert_demo_data()
 
 
 def insert_demo_data():
@@ -257,3 +269,8 @@ def _create_demo_fwl_sql():
 			"now": now,
 		})
 		print(f"  ✅ Created Fabric Wastage Log: {fwl_name}")
+
+
+commands = [
+	insert_demo_data_command
+]
