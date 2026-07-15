@@ -77,7 +77,14 @@ def insert_demo_data_command():
 			print("✅ Demo data already exists, skipping Phase 1")
 
 		# Phase 2: Additional feature demo data (looms, patterns, vendor deliveries)
-		if not frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1"):
+		try:
+			loom_exists = frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1")
+		except Exception:
+			frappe.db.rollback()
+			loom_exists = True  # Assume exists so we skip with a helpful message
+			print("⚠️  New feature tables not found — run 'bench --site mysite.local migrate' first, then re-run this command")
+
+		if not loom_exists:
 			print("Inserting demo data for new features...")
 			_create_demo_looms()
 			frappe.db.commit()
