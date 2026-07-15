@@ -4,8 +4,6 @@ import click
 
 import frappe
 from frappe.utils import today, add_days, now_datetime
-
-
 @click.command("insert-demo-data")
 def insert_demo_data_command():
 	"""Insert demo data for Textile Tracking app.
@@ -13,38 +11,69 @@ def insert_demo_data_command():
 	Usage:
 		bench --site [site] insert-demo-data
 	"""
-	insert_demo_data()
+	# Phase 1: Core demo data (contractors, JWOs, wastage logs, raw materials, fabric rolls)
+	if not frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
+		print("Inserting demo data...")
+		_create_demo_contractors_sql()
+		frappe.db.commit()
+
+		_create_demo_jwo_sql()
+		frappe.db.commit()
+
+		_create_demo_fwl_sql()
+		frappe.db.commit()
+
+		_create_demo_raw_material_batches()
+		frappe.db.commit()
+
+		_create_demo_fabric_rolls()
+		frappe.db.commit()
+
+		print("✅ Demo data inserted successfully!")
+	else:
+		print("✅ Demo data already exists, skipping Phase 1")
+
+	# Phase 2: Additional feature demo data (looms, patterns, vendor deliveries)
+	if not frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1"):
+		print("Inserting demo data for new features...")
+		_create_demo_looms()
+		frappe.db.commit()
+
+		_create_demo_patterns()
+		frappe.db.commit()
+
+		_create_demo_vendor_deliveries()
+		frappe.db.commit()
+
+		print("✅ Demo data for new features inserted!")
+	else:
+		print("✅ New feature demo data already exists, skipping Phase 2")
 
 
+# Backward compatibility: insert_demo_data() can still be called from console
 def insert_demo_data():
-	"""Insert demo data using direct SQL to bypass DocType controller issues.
+	"""Insert core demo data (backward compat entry point).
 
 	Run via bench console:
 		import textile_tracking.commands
 		textile_tracking.commands.insert_demo_data()
 	"""
-	# Check if demo data already exists
-	existing = frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1")
-	if existing:
+	if frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
 		print("✅ Demo data already exists, skipping")
 		return
 	print("Inserting demo data...")
 	_create_demo_contractors_sql()
 	frappe.db.commit()
-
 	_create_demo_jwo_sql()
 	frappe.db.commit()
-
 	_create_demo_fwl_sql()
 	frappe.db.commit()
-
 	_create_demo_raw_material_batches()
 	frappe.db.commit()
-
 	_create_demo_fabric_rolls()
 	frappe.db.commit()
-
 	print("✅ Demo data inserted successfully!")
+
 
 def _create_demo_contractors_sql():
 	"""Insert demo contractors using raw SQL."""
@@ -626,32 +655,6 @@ def _create_demo_vendor_deliveries():
 			"now": now,
 		})
 		print(f"  ✅ Created demo Vendor Delivery Schedules")
-
-
-# Update the main function to include new demo data
-original_insert = insert_demo_data
-
-def insert_demo_data():
-	"""Insert all demo data."""
-	original_insert()
-
-	# Check if loom demo data already exists
-	if frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1"):
-		print("⚠️  Looms already exist, skipping")
-		return
-
-	print("Inserting additional demo data...")
-
-	_create_demo_looms()
-	frappe.db.commit()
-
-	_create_demo_patterns()
-	frappe.db.commit()
-
-	_create_demo_vendor_deliveries()
-	frappe.db.commit()
-
-	print("✅ Additional demo data inserted successfully!")
 
 
 commands = [
