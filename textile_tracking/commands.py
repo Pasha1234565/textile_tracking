@@ -630,7 +630,7 @@ def _create_demo_patterns():
 		("PT-DEMO-0001", "Sleeve", 55, 60, 2),
 		("PT-DEMO-0001", "Collar", 20, 10, 1),
 	]
-	for idx, (parent, name, w, h, qty) in enumerate(pieces, 1):
+	for idx, (parent, pname, w, h, qty) in enumerate(pieces, 1):
 		frappe.db.sql("""
 			INSERT INTO `tabPattern Piece`
 				(name, parent, parenttype, parentfield, idx,
@@ -644,7 +644,7 @@ def _create_demo_patterns():
 			"name": frappe.generate_hash("", 10),
 			"parent": parent,
 			"idx": idx,
-			"piece": piece,
+			"piece": pname,
 			"width": w,
 			"height": h,
 			"qty": qty,
