@@ -1,6 +1,7 @@
 {
  "doctype": "Workspace",
  "name": "Textile Tracking",
+ "title": "Textile Tracking",
  "workspace_name": "Textile Tracking",
  "module": "Textile",
  "is_standard": 1,
