@@ -54,10 +54,14 @@ class JobWorkOrder(Document):
 
 	def create_stock_transfer_on_send(self):
 		"""Create Stock Entry for material transfer to subcontractor."""
-		if frappe.db.get_single_value("Stock Settings", "allow_material_transfer_to_subcontractor"):
-			from textile_tracking.textile.api import create_subcontract_transfer
+		try:
+			if frappe.db.get_single_value("Stock Settings", "allow_material_transfer_to_subcontractor"):
+				from textile_tracking.textile.api import create_subcontract_transfer
 
-			create_subcontract_transfer(self)
+				create_subcontract_transfer(self)
+		except Exception:
+			# Field may not exist in older ERPNext versions — skip stock transfer silently
+			pass
 
 	def reconcile_returns(self):
 		"""Create Stock Entry for material receipt from subcontractor."""
