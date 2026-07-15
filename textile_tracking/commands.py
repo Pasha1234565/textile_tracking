@@ -519,26 +519,30 @@ def _create_demo_fabric_rolls():
 				 %(now)s, %(now)s, 'Administrator', 'Administrator', %(idx)s)
 		""", {**r, "idx": idx, "now": now})
 
-		# Add a process history entry for this roll
+		# Add a process history entry for this roll (skip gracefully if table missing)
 		if r.get("job_work_order"):
-			frappe.db.sql("""
-				INSERT INTO `tabProcess History Entry`
-					(name, parent, parenttype, parentfield, idx,
-					 process_name, contractor, date_completed, notes,
-					 creation, modified, modified_by, owner, docstatus)
-				VALUES
-					(%(name)s, %(parent)s, 'Fabric Roll', 'process_history', 1,
-					 %(process)s, %(contractor)s, %(date)s, %(notes)s,
-					 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
-			""", {
-				"name": frappe.generate_hash("", 10),
-				"parent": r["name"],
-				"process": "Weaving",
-				"contractor": r["contractor"],
-				"date": add_days(today(), -7),
-				"notes": "Processed via job work order",
-				"now": now,
-			})
+			try:
+				frappe.db.sql("""
+					INSERT INTO `tabProcess History Entry`
+						(name, parent, parenttype, parentfield, idx,
+						 process_name, contractor, date_completed, notes,
+						 creation, modified, modified_by, owner, docstatus)
+					VALUES
+						(%(name)s, %(parent)s, 'Fabric Roll', 'process_history', 1,
+						 %(process)s, %(contractor)s, %(date)s, %(notes)s,
+						 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
+				""", {
+					"name": frappe.generate_hash("", 10),
+					"parent": r["name"],
+					"process": "Weaving",
+					"contractor": r["contractor"],
+					"date": add_days(today(), -7),
+					"notes": "Processed via job work order",
+					"now": now,
+				})
+			except Exception as e:
+				frappe.db.rollback()
+				print(f"  ⚠️  Process History skipped (table not ready, run bench migrate first): {e}")
 
 		print(f"  ✅ Created Fabric Roll: {r['roll_number']}")
 
