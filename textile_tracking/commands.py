@@ -11,43 +11,47 @@ def insert_demo_data_command():
 	Usage:
 		bench --site [site] insert-demo-data
 	"""
-	# Phase 1: Core demo data (contractors, JWOs, wastage logs, raw materials, fabric rolls)
-	if not frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
-		print("Inserting demo data...")
-		_create_demo_contractors_sql()
-		frappe.db.commit()
+	frappe.connect()
+	try:
+		# Phase 1: Core demo data (contractors, JWOs, wastage logs, raw materials, fabric rolls)
+		if not frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
+			print("Inserting demo data...")
+			_create_demo_contractors_sql()
+			frappe.db.commit()
 
-		_create_demo_jwo_sql()
-		frappe.db.commit()
+			_create_demo_jwo_sql()
+			frappe.db.commit()
 
-		_create_demo_fwl_sql()
-		frappe.db.commit()
+			_create_demo_fwl_sql()
+			frappe.db.commit()
 
-		_create_demo_raw_material_batches()
-		frappe.db.commit()
+			_create_demo_raw_material_batches()
+			frappe.db.commit()
 
-		_create_demo_fabric_rolls()
-		frappe.db.commit()
+			_create_demo_fabric_rolls()
+			frappe.db.commit()
 
-		print("✅ Demo data inserted successfully!")
-	else:
-		print("✅ Demo data already exists, skipping Phase 1")
+			print("✅ Demo data inserted successfully!")
+		else:
+			print("✅ Demo data already exists, skipping Phase 1")
 
-	# Phase 2: Additional feature demo data (looms, patterns, vendor deliveries)
-	if not frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1"):
-		print("Inserting demo data for new features...")
-		_create_demo_looms()
-		frappe.db.commit()
+		# Phase 2: Additional feature demo data (looms, patterns, vendor deliveries)
+		if not frappe.db.sql("SELECT name FROM `tabLoom` LIMIT 1"):
+			print("Inserting demo data for new features...")
+			_create_demo_looms()
+			frappe.db.commit()
 
-		_create_demo_patterns()
-		frappe.db.commit()
+			_create_demo_patterns()
+			frappe.db.commit()
 
-		_create_demo_vendor_deliveries()
-		frappe.db.commit()
+			_create_demo_vendor_deliveries()
+			frappe.db.commit()
 
-		print("✅ Demo data for new features inserted!")
-	else:
-		print("✅ New feature demo data already exists, skipping Phase 2")
+			print("✅ Demo data for new features inserted!")
+		else:
+			print("✅ New feature demo data already exists, skipping Phase 2")
+	finally:
+		frappe.destroy()
 
 
 # Backward compatibility: insert_demo_data() can still be called from console
@@ -58,21 +62,25 @@ def insert_demo_data():
 		import textile_tracking.commands
 		textile_tracking.commands.insert_demo_data()
 	"""
-	if frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
-		print("✅ Demo data already exists, skipping")
-		return
-	print("Inserting demo data...")
-	_create_demo_contractors_sql()
-	frappe.db.commit()
-	_create_demo_jwo_sql()
-	frappe.db.commit()
-	_create_demo_fwl_sql()
-	frappe.db.commit()
-	_create_demo_raw_material_batches()
-	frappe.db.commit()
-	_create_demo_fabric_rolls()
-	frappe.db.commit()
-	print("✅ Demo data inserted successfully!")
+	frappe.connect()
+	try:
+		if frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
+			print("✅ Demo data already exists, skipping")
+			return
+		print("Inserting demo data...")
+		_create_demo_contractors_sql()
+		frappe.db.commit()
+		_create_demo_jwo_sql()
+		frappe.db.commit()
+		_create_demo_fwl_sql()
+		frappe.db.commit()
+		_create_demo_raw_material_batches()
+		frappe.db.commit()
+		_create_demo_fabric_rolls()
+		frappe.db.commit()
+		print("✅ Demo data inserted successfully!")
+	finally:
+		frappe.destroy()
 
 
 def _create_demo_contractors_sql():
