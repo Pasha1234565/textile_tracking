@@ -1,0 +1,48 @@
+{
+ "doctype": "DocType",
+ "name": "Process History Entry",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 1,
+ "is_table": 1,
+ "is_single": 0,
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "process_name",
+   "fieldtype": "Data",
+   "label": "Process Name",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "contractor",
+   "fieldtype": "Link",
+   "label": "Contractor",
+   "options": "Job Contractor",
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "date_completed",
+   "fieldtype": "Date",
+   "label": "Date Completed",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes",
+   "columns": 4
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ title }}</title>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+			background: #f5f7fa;
+			color: #1a2332;
+			padding: 20px;
+		}
+		.portal-header {
+			background: linear-gradient(135deg, #1a3a5c 0%, #2a5f8f 100%);
+			border-radius: 16px;
+			padding: 30px;
+			color: #fff;
+			margin-bottom: 24px;
+		}
+		.portal-header h1 { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+		.portal-header p { opacity: 0.85; font-size: 14px; }
+		.portal-header .user-badge {
+			display: inline-block;
+			background: rgba(255,255,255,0.15);
+			padding: 4px 12px;
+			border-radius: 20px;
+			font-size: 12px;
+			margin-top: 8px;
+		}
+		.stats-bar {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+			gap: 12px;
+			margin-bottom: 24px;
+		}
+		.stat-card {
+			background: #fff;
+			border-radius: 10px;
+			padding: 20px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+			text-align: center;
+		}
+		.stat-card .stat-value { font-size: 28px; font-weight: 700; color: #1a3a5c; }
+		.stat-card .stat-label { font-size: 12px; color: #8b9aa9; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+		.login-prompt {
+			text-align: center;
+			padding: 80px 20px;
+			background: #fff;
+			border-radius: 16px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+		}
+		.login-prompt h2 { color: #1a3a5c; margin-bottom: 12px; }
+		.login-prompt p { color: #8b9aa9; margin-bottom: 20px; }
+		.login-btn {
+			display: inline-block;
+			padding: 12px 32px;
+			background: #1a73e8;
+			color: #fff;
+			border: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.login-btn:hover { background: #1557b0; }
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			background: #fff;
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+		}
+		th {
+			background: #f8fafc;
+			padding: 12px 16px;
+			text-align: left;
+			font-size: 12px;
+			font-weight: 600;
+			color: #6b7a8f;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			border-bottom: 2px solid #eef2f7;
+		}
+		td {
+			padding: 12px 16px;
+			border-bottom: 1px solid #f0f2f5;
+			font-size: 13px;
+		}
+		tr:last-child td { border-bottom: none; }
+		tr:hover td { background: #f8fafc; }
+
+		.status-badge {
+			display: inline-block;
+			padding: 3px 10px;
+			border-radius: 12px;
+			font-size: 11px;
+			font-weight: 500;
+		}
+		.status-Pending { background: #fef7e0; color: #f59e0b; }
+		.status-Confirmed { background: #e6f4ea; color: #1e7e34; }
+		.status-Shipped { background: #e3f2fd; color: #1565c0; }
+		.status-Delayed { background: #fce8e6; color: #c5221f; }
+		.status-Delivered { background: #e8f5e9; color: #2e7d32; }
+		.status-Cancelled { background: #f1f3f4; color: #5f6368; }
+
+		.deliveries-section { margin-top: 20px; }
+		.deliveries-section h2 { font-size: 18px; color: #1a3a5c; margin-bottom: 16px; }
+		.empty-state { text-align: center; padding: 60px 20px; color: #8b9aa9; background: #fff; border-radius: 12px; }
+
+		.update-form {
+			margin-top: 20px;
+			background: #fff;
+			border-radius: 12px;
+			padding: 20px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+		}
+		.update-form h3 { font-size: 16px; color: #1a3a5c; margin-bottom: 16px; }
+		.form-group { margin-bottom: 12px; }
+		.form-group label { display: block; font-size: 13px; font-weight: 500; color: #6b7a8f; margin-bottom: 4px; }
+		.form-group input, .form-group textarea, .form-group select {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1px solid #d1d8dd;
+			border-radius: 6px;
+			font-size: 14px;
+		}
+		.form-group textarea { min-height: 80px; }
+		.submit-btn {
+			padding: 10px 24px;
+			background: #1a73e8;
+			color: #fff;
+			border: none;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+		}
+		.submit-btn:hover { background: #1557b0; }
+
+		@media (max-width: 640px) {
+			table { font-size: 12px; }
+			th, td { padding: 8px 10px; }
+		}
+	</style>
+</head>
+<body>
+	<div class="portal-header">
+		<h1>🤝 Supplier Collaboration Portal</h1>
+		{% if supplier %}
+		<p>Welcome, {{ supplier.supplier_name or supplier.name }}</p>
+		<span class="user-badge">Verified Supplier</span>
+		{% else %}
+		<p>Update your delivery schedules and keep the factory informed</p>
+		{% endif %}
+	</div>
+
+	{% if login_required %}
+	<div class="login-prompt">
+		<h2>🔒 Login Required</h2>
+		<p>Please log in to access the Supplier Portal and update your delivery schedules.</p>
+		<a href="/login?redirect-to=/supplier_portal" class="login-btn">Login as Supplier</a>
+	</div>
+	{% elif no_supplier_link %}
+	<div class="login-prompt">
+		<h2>👤 No Supplier Profile Found</h2>
+		<p>Your user account is not linked to any supplier profile. Please contact the factory administrator.</p>
+	</div>
+	{% else %}
+
+	<!-- Stats -->
+	<div class="stats-bar">
+		<div class="stat-card">
+			<div class="stat-value">{{ delivery_count }}</div>
+			<div class="stat-label">Total Deliveries</div>
+		</div>
+		<div class="stat-card">
+			<div class="stat-value">{{ pending_count }}</div>
+			<div class="stat-label">Pending Updates</div>
+		</div>
+		<div class="stat-card">
+			<div class="stat-value">{{ today_date }}</div>
+			<div class="stat-label">Today</div>
+		</div>
+	</div>
+
+	<!-- Delivery Schedules -->
+	<div class="deliveries-section">
+		<h2>📦 Your Delivery Schedules</h2>
+		{% if deliveries %}
+		<table>
+			<thead>
+				<tr>
+					<th>Schedule ID</th>
+					<th>Material Batch</th>
+					<th>Original Date</th>
+					<th>Revised Date</th>
+					<th>Qty</th>
+					<th>Status</th>
+					<th>Last Updated</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for d in deliveries %}
+				<tr>
+					<td><strong>{{ d.name }}</strong></td>
+					<td>{{ d.raw_material_batch or 'N/A' }}</td>
+					<td>{{ d.original_delivery_date }}</td>
+					<td>{{ d.revised_delivery_date or '-' }}</td>
+					<td>{{ d.qty_expected }} {{ d.uom or '' }}</td>
+					<td><span class="status-badge status-{{ d.status }}">{{ d.status }}</span></td>
+					<td>{{ d.last_updated_by_supplier or '-' }}</td>
+					<td>
+						<button onclick="document.getElementById('update-{{ d.name | replace('-', '_') }}').style.display='block'"
+								style="padding:4px 12px;background:#e8f0fe;border:none;border-radius:4px;color:#1a73e8;cursor:pointer;font-size:12px;">
+							Update
+						</button>
+					</td>
+				</tr>
+				<!-- Hidden Update Form -->
+				<tr id="update-{{ d.name | replace('-', '_') }}" style="display:none;">
+					<td colspan="8">
+						<form action="/api/method/frappe.client.save" method="post" style="display:flex;gap:8px;align-items:end;">
+							<input type="hidden" name="doctype" value="Vendor Delivery Schedule">
+							<input type="hidden" name="name" value="{{ d.name }}">
+							<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+							<div>
+								<label style="font-size:11px;color:#6b7a8f;">Revised Date</label>
+								<input type="date" name="revised_delivery_date" value="{{ d.revised_delivery_date or d.original_delivery_date }}" style="padding:6px 10px;border:1px solid #d1d8dd;border-radius:4px;">
+							</div>
+							<div>
+								<label style="font-size:11px;color:#6b7a8f;">Status</label>
+								<select name="status" style="padding:6px 10px;border:1px solid #d1d8dd;border-radius:4px;">
+									<option value="Confirmed" {% if d.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+									<option value="Delayed" {% if d.status == 'Delayed' %}selected{% endif %}>Delayed</option>
+									<option value="Shipped" {% if d.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+								</select>
+							</div>
+							<div>
+								<label style="font-size:11px;color:#6b7a8f;">Notes</label>
+								<input type="text" name="supplier_notes" placeholder="Reason for update..." value="{{ d.supplier_notes or '' }}" style="padding:6px 10px;border:1px solid #d1d8dd;border-radius:4px;width:200px;">
+							</div>
+							<button type="submit" style="padding:6px 16px;background:#1a73e8;color:#fff;border:none;border-radius:4px;cursor:pointer;">
+								Save
+							</button>
+						</form>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% else %}
+		<div class="empty-state">
+			<h3>📭 No Delivery Schedules Found</h3>
+			<p>Your delivery schedules will appear here once the factory creates them.</p>
+		</div>
+		{% endif %}
+	</div>
+
+	{% endif %}
+</body>
+</html>

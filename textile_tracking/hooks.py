@@ -51,6 +51,11 @@ scheduler_events = {
 
 # Website
 # ------------------------------
+website_route_rules = [
+	{"from_route": "/dpp/<roll_id>", "to_route": "dpp"},
+	{"from_route": "/loom-dashboard", "to_route": "loom_dashboard"},
+	{"from_route": "/supplier-portal", "to_route": "supplier_portal"},
+]
 
 # Jinja
 # ------------------------------

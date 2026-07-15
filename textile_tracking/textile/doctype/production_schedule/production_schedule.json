@@ -1,0 +1,91 @@
+{
+ "doctype": "DocType",
+ "name": "Production Schedule",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 1,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "PS-.YYYY.-.####",
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "PS-.YYYY.-.####",
+   "default": "PS-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Schedule Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "shift",
+   "fieldtype": "Select",
+   "label": "Shift",
+   "options": "Morning\nEvening\nNight",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nPlanned\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Schedule Items"
+  },
+  {
+   "fieldname": "schedule_items",
+   "fieldtype": "Table",
+   "label": "Schedule Items",
+   "options": "Production Schedule Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Production Schedule",
+   "no_copy": 1,
+   "hidden": 1,
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "amend": 1, "cancel": 1, "submit": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "amend": 1, "cancel": 1, "submit": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

@@ -1,0 +1,60 @@
+{
+ "doctype": "DocType",
+ "name": "Pattern Piece",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_child_table": 1,
+ "is_table": 1,
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "piece_name",
+   "fieldtype": "Data",
+   "label": "Piece Name",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "width_cm",
+   "fieldtype": "Float",
+   "label": "Width (CM)",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "height_cm",
+   "fieldtype": "Float",
+   "label": "Height (CM)",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "qty_per_roll",
+   "fieldtype": "Int",
+   "label": "Qty Per Roll",
+   "reqd": 1,
+   "default": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "fabric_direction",
+   "fieldtype": "Select",
+   "label": "Fabric Direction",
+   "options": "Any\nAlong Grain\nCross Grain\nBiased",
+   "default": "Any",
+   "columns": 2
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

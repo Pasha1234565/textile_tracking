@@ -1,0 +1,148 @@
+{
+ "doctype": "DocType",
+ "name": "Loom",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "field:machine_id",
+ "title_field": "machine_id",
+ "show_title_field_in_link": 1,
+ "track_changes": 1,
+ "track_views": 1,
+ "fields": [
+  {
+   "fieldname": "machine_id",
+   "fieldtype": "Data",
+   "label": "Machine ID",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "description": "Unique identifier for this machine/loom"
+  },
+  {
+   "fieldname": "machine_type",
+   "fieldtype": "Select",
+   "label": "Machine Type",
+   "options": "Airjet Loom\nRapier Loom\nShuttle Loom\nWaterjet Loom\nDobby Loom\nJacquard Loom\nCircular Knitting\nFlat Knitting\nOther",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Running\nIdle\nUnder Maintenance\nBreakdown\nOffline",
+   "default": "Idle",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "speed_rpm",
+   "fieldtype": "Int",
+   "label": "Speed (RPM)",
+   "description": "Current speed in picks per minute / revolutions per minute"
+  },
+  {
+   "fieldname": "section_break_location",
+   "fieldtype": "Section Break",
+   "label": "Location & Assignment"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Location",
+   "description": "Floor / section / row identifier"
+  },
+  {
+   "fieldname": "column_break_location",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "operator_name",
+   "fieldtype": "Data",
+   "label": "Operator Name"
+  },
+  {
+   "fieldname": "section_break_performance",
+   "fieldtype": "Section Break",
+   "label": "Performance Metrics",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "efficiency_pct",
+   "fieldtype": "Percent",
+   "label": "Efficiency %",
+   "read_only": 1,
+   "description": "Auto-calculated from output logs"
+  },
+  {
+   "fieldname": "column_break_perf",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meters_produced_today",
+   "fieldtype": "Float",
+   "label": "Meters Produced Today",
+   "read_only": 1,
+   "description": "Total meters produced today from output logs"
+  },
+  {
+   "fieldname": "defects_today",
+   "fieldtype": "Int",
+   "label": "Defects Today",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_specs",
+   "fieldtype": "Section Break",
+   "label": "Specifications",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "max_width_cm",
+   "fieldtype": "Float",
+   "label": "Max Width (CM)"
+  },
+  {
+   "fieldname": "column_break_specs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "manufacturer",
+   "fieldtype": "Data",
+   "label": "Manufacturer"
+  },
+  {
+   "fieldname": "installation_date",
+   "fieldtype": "Date",
+   "label": "Installation Date"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

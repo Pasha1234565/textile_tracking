@@ -1,0 +1,29 @@
+{
+ "doctype": "Report",
+ "name": "Lot Genealogy",
+ "module": "Textile",
+ "is_standard": "Yes",
+ "report_type": "Script Report",
+ "ref_doctype": "Raw Material Batch",
+ "filters": [
+  {
+   "fieldname": "raw_material_batch",
+   "fieldtype": "Link",
+   "label": "Raw Material Batch",
+   "options": "Raw Material Batch",
+   "mandatory": 0
+  },
+  {
+   "fieldname": "fabric_roll",
+   "fieldtype": "Link",
+   "label": "Fabric Roll",
+   "options": "Fabric Roll",
+   "mandatory": 0
+  }
+ ],
+ "add_totals_row": 0,
+ "fields": [],
+ "sort_by": "",
+ "sort_order": "DESC",
+ "disabled": 0
+}

@@ -1,0 +1,69 @@
+{
+ "doctype": "DocType",
+ "name": "Cutting Plan Item",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_child_table": 1,
+ "is_table": 1,
+ "editable_grid": 1,
+ "fields": [
+  {
+   "fieldname": "pattern_template",
+   "fieldtype": "Link",
+   "label": "Pattern Template",
+   "options": "Pattern Template",
+   "in_list_view": 1,
+   "columns": 3
+  },
+  {
+   "fieldname": "piece_name",
+   "fieldtype": "Data",
+   "label": "Piece Name",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "width_cm",
+   "fieldtype": "Float",
+   "label": "Width (CM)",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "height_cm",
+   "fieldtype": "Float",
+   "label": "Height (CM)",
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "qty_planned",
+   "fieldtype": "Int",
+   "label": "Qty Planned",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "qty_cut",
+   "fieldtype": "Int",
+   "label": "Qty Cut",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "x_position",
+   "fieldtype": "Float",
+   "label": "X Position (CM)",
+   "description": "Position in cutting layout (auto-calculated)"
+  },
+  {
+   "fieldname": "y_position",
+   "fieldtype": "Float",
+   "label": "Y Position (CM)",
+   "description": "Position in cutting layout (auto-calculated)"
+  }
+ ],
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

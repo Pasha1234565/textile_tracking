@@ -1,0 +1,243 @@
+<!-- Digital Product Passport — EU 2027 Compliant Fabric Lifecycle Page -->
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<style>
+	.dpp-container {
+		max-width: 900px;
+		margin: 0 auto;
+		padding: 30px 20px;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	}
+	.dpp-header {
+		text-align: center;
+		margin-bottom: 40px;
+		padding: 40px 20px;
+		background: linear-gradient(135deg, #1a3a5c 0%, #2a5f8f 100%);
+		border-radius: 16px;
+		color: #fff;
+	}
+	.dpp-header h1 { font-size: 28px; margin: 0 0 8px; font-weight: 600; }
+	.dpp-header p { font-size: 14px; opacity: 0.85; margin: 0; }
+	.dpp-badge {
+		display: inline-block;
+		background: rgba(255,255,255,0.15);
+		padding: 4px 12px;
+		border-radius: 20px;
+		font-size: 11px;
+		margin-top: 12px;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+	.dpp-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+		margin-bottom: 30px;
+	}
+	.dpp-card {
+		background: #fff;
+		border: 1px solid #e4e8ee;
+		border-radius: 12px;
+		padding: 20px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	}
+	.dpp-card h3 {
+		font-size: 13px;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		color: #6b7a8f;
+		margin: 0 0 12px;
+		font-weight: 600;
+	}
+	.dpp-card .value { font-size: 22px; font-weight: 600; color: #1a3a5c; }
+	.dpp-card .label { font-size: 12px; color: #8b9aa9; margin-top: 2px; }
+	.dpp-timeline {
+		position: relative;
+		padding-left: 30px;
+		margin: 20px 0;
+	}
+	.dpp-timeline::before {
+		content: '';
+		position: absolute;
+		left: 8px;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: #d1d8e0;
+	}
+	.dpp-timeline-item {
+		position: relative;
+		margin-bottom: 20px;
+		padding: 12px 16px;
+		background: #f8fafc;
+		border-radius: 8px;
+		border: 1px solid #eef2f7;
+	}
+	.dpp-timeline-item::before {
+		content: '';
+		position: absolute;
+		left: -26px;
+		top: 16px;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: #2490ef;
+		border: 2px solid #fff;
+		box-shadow: 0 0 0 2px #2490ef;
+	}
+	.dpp-timeline-item .process-name { font-weight: 600; color: #1a3a5c; }
+	.dpp-timeline-item .process-meta { font-size: 12px; color: #8b9aa9; margin-top: 4px; }
+	.dpp-section-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #1a3a5c;
+		margin: 30px 0 16px;
+		padding-bottom: 8px;
+		border-bottom: 2px solid #eef2f7;
+	}
+	.dpp-data-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	.dpp-data-table td {
+		padding: 8px 12px;
+		border-bottom: 1px solid #f0f2f5;
+		font-size: 14px;
+	}
+	.dpp-data-table td:first-child {
+		color: #6b7a8f;
+		font-weight: 500;
+		width: 200px;
+	}
+	.dpp-cert-badge {
+		display: inline-block;
+		padding: 3px 10px;
+		border-radius: 12px;
+		font-size: 11px;
+		font-weight: 500;
+		margin: 2px;
+	}
+	.dpp-cert-gots { background: #e8f5e9; color: #2e7d32; }
+	.dpp-cert-oekotex { background: #e3f2fd; color: #1565c0; }
+	.dpp-cert-fairtrade { background: #fff3e0; color: #e65100; }
+	.dpp-cert-other { background: #f3e5f5; color: #7b1fa2; }
+	.dpp-error {
+		text-align: center;
+		padding: 60px 20px;
+	}
+	.dpp-footer {
+		text-align: center;
+		margin-top: 40px;
+		padding: 20px;
+		font-size: 12px;
+		color: #8b9aa9;
+		border-top: 1px solid #eef2f7;
+	}
+	@media (max-width: 640px) {
+		.dpp-grid { grid-template-columns: 1fr; }
+	}
+</style>
+
+<div class="dpp-container">
+	{% if error %}
+		<div class="dpp-error">
+			<h2>🔍 Passport Not Found</h2>
+			<p style="color:#8b9aa9;">{{ error }}</p>
+		</div>
+	{% else %}
+		<!-- Header -->
+		<div class="dpp-header">
+			<div class="dpp-badge">Digital Product Passport</div>
+			<h1>🧵 {{ roll.roll_number or roll.name }}</h1>
+			<p>Complete lifecycle traceability from raw material to finished fabric</p>
+		</div>
+
+		<!-- Key Metrics -->
+		<div class="dpp-grid">
+			<div class="dpp-card">
+				<h3>Fabric Details</h3>
+				<table class="dpp-data-table">
+					<tr><td>Roll Number</td><td>{{ roll.roll_number or roll.name }}</td></tr>
+					<tr><td>Item Code</td><td>{{ roll.source_item or 'N/A' }}</td></tr>
+					<tr><td>Production Stage</td><td>{{ roll.production_stage or 'N/A' }}</td></tr>
+					<tr><td>Date Produced</td><td>{{ roll.production_date or 'N/A' }}</td></tr>
+					<tr><td>Grade</td><td>{{ roll.grade or 'N/A' }}</td></tr>
+					<tr><td>Quality Status</td><td>{{ roll.quality_status or 'N/A' }}</td></tr>
+				</table>
+			</div>
+			<div class="dpp-card">
+				<h3>Measurements</h3>
+				<div class="value">{{ roll.length_meters or '0' }}</div>
+				<div class="label">Length (Meters)</div>
+				{% if roll.width_cm %}<div class="value" style="margin-top:12px;">{{ roll.width_cm }}</div>
+				<div class="label">Width (CM)</div>{% endif %}
+				{% if roll.weight_kg %}<div class="value" style="margin-top:12px;">{{ roll.weight_kg }}</div>
+				<div class="label">Weight (KG)</div>{% endif %}
+			</div>
+		</div>
+
+		<!-- Raw Material Batch -->
+		{% if batch %}
+		<div class="dpp-section-title">🌾 Raw Material Origin</div>
+		<div class="dpp-card" style="margin-bottom:20px;">
+			<table class="dpp-data-table">
+				<tr><td>Batch ID</td><td>{{ batch.batch_id }}</td></tr>
+				<tr><td>Material Type</td><td>{{ batch.material_type }}</td></tr>
+				<tr><td>Country of Origin</td><td>{{ batch.origin_country or 'N/A' }}</td></tr>
+				<tr><td>Supplier</td><td>{{ batch.supplier or 'N/A' }}</td></tr>
+				<tr><td>Quality Grade</td><td>{{ batch.quality_grade or 'N/A' }}</td></tr>
+				<tr><td>Received Date</td><td>{{ batch.received_date or 'N/A' }}</td></tr>
+				{% if batch.certification_type %}
+				<tr>
+					<td>Certifications</td>
+					<td>
+						<span class="dpp-cert-badge {% if batch.certification_type == 'GOTS' %}dpp-cert-gots{% elif batch.certification_type == 'OEKO-TEX' %}dpp-cert-oekotex{% elif batch.certification_type == 'Fair Trade' %}dpp-cert-fairtrade{% else %}dpp-cert-other{% endif %}">
+							{{ batch.certification_type }}
+						</span>
+						{% if batch.organic_cert_id %}
+						<span style="font-size:11px;color:#8b9aa9;">ID: {{ batch.organic_cert_id }}</span>
+						{% endif %}
+					</td>
+				</tr>
+				{% endif %}
+			</table>
+		</div>
+		{% endif %}
+
+		<!-- Process History Timeline -->
+		<div class="dpp-section-title">⚙️ Manufacturing Timeline</div>
+		{% if process_history %}
+		<div class="dpp-timeline">
+			{% for step in process_history %}
+			<div class="dpp-timeline-item">
+				<div class="process-name">{{ step.process_name }}</div>
+				<div class="process-meta">
+					{% if step.contractor %}Contractor: {{ step.contractor }}<br>{% endif %}
+					{% if step.date_completed %}Completed: {{ step.date_completed }}{% endif %}
+				</div>
+				{% if step.notes %}
+				<div style="font-size:12px;color:#6b7a8f;margin-top:4px;font-style:italic;">{{ step.notes }}</div>
+				{% endif %}
+			</div>
+			{% endfor %}
+		</div>
+		{% else %}
+		<p style="color:#8b9aa9;text-align:center;padding:20px;">No manufacturing history recorded for this roll.</p>
+		{% endif %}
+
+		<!-- QR Code -->
+		<div style="text-align:center;margin:30px 0;">
+			<img src="https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl={{ qr_url | urlencode }}&choe=UTF-8"
+				 style="width:160px;height:160px;border-radius:8px;border:1px solid #e4e8ee;padding:8px;background:#fff;"
+				 alt="QR Code for {{ roll.roll_number or roll.name }}"/>
+			<p style="font-size:12px;color:#8b9aa9;margin-top:8px;">Scan this code to verify the passport</p>
+		</div>
+
+		<div class="dpp-footer">
+			<p>This Digital Product Passport complies with EU Regulation 2027/XXXX on textile product traceability.</p>
+			<p>Generated by Textile Tracking System • {{ today_date }}</p>
+		</div>
+	{% endif %}
+</div>
+{% endblock %}

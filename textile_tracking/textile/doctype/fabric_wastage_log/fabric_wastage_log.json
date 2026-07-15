@@ -105,6 +105,20 @@
    "fieldname": "remarks",
    "fieldtype": "Small Text",
    "label": "Remarks"
+  },
+  {
+   "fieldname": "traceability_section",
+   "fieldtype": "Section Break",
+   "label": "Traceability",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "raw_material_batch",
+   "fieldtype": "Link",
+   "label": "Raw Material Batch",
+   "options": "Raw Material Batch",
+   "search_index": 1,
+   "description": "Link to the raw material batch this wastage is associated with"
   }
  ],
  "permissions": [

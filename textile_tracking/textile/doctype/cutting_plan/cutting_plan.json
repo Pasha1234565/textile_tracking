@@ -1,0 +1,132 @@
+{
+ "doctype": "DocType",
+ "name": "Cutting Plan",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 1,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "CP-.YYYY.-.####",
+ "title_field": "cutting_plan_name",
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "CP-.YYYY.-.####",
+   "default": "CP-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "cutting_plan_name",
+   "fieldtype": "Data",
+   "label": "Cutting Plan Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "fabric_roll",
+   "fieldtype": "Link",
+   "label": "Fabric Roll",
+   "options": "Fabric Roll",
+   "reqd": 1,
+   "search_index": 1,
+   "description": "The fabric roll to cut from"
+  },
+  {
+   "fieldname": "roll_length_meters",
+   "fieldtype": "Float",
+   "label": "Roll Length (Meters)",
+   "read_only": 1,
+   "fetch_from": "fabric_roll.length_meters"
+  },
+  {
+   "fieldname": "roll_width_cm",
+   "fieldtype": "Float",
+   "label": "Roll Width (CM)",
+   "read_only": 1,
+   "fetch_from": "fabric_roll.width_cm"
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Cutting Items"
+  },
+  {
+   "fieldname": "cutting_items",
+   "fieldtype": "Table",
+   "label": "Cutting Items",
+   "options": "Cutting Plan Item",
+   "description": "Pattern pieces to cut from this roll"
+  },
+  {
+   "fieldname": "section_break_optimization",
+   "fieldtype": "Section Break",
+   "label": "Optimization Results",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "total_fabric_used",
+   "fieldtype": "Float",
+   "label": "Total Fabric Used (sq m)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_opt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_waste_pct",
+   "fieldtype": "Percent",
+   "label": "Estimated Waste %",
+   "read_only": 1,
+   "description": "Predicted waste percentage from this cutting plan"
+  },
+  {
+   "fieldname": "section_break_layout",
+   "fieldtype": "Section Break",
+   "label": "Layout Preview",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "layout_html",
+   "fieldtype": "Code",
+   "label": "Layout HTML",
+   "options": "HTML",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Cutting Plan",
+   "no_copy": 1,
+   "hidden": 1,
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "amend": 1, "cancel": 1, "submit": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "amend": 1, "cancel": 1, "submit": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

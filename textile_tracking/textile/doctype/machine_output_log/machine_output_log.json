@@ -1,0 +1,115 @@
+{
+ "doctype": "DocType",
+ "name": "Machine Output Log",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "MOL-.YYYY.-.####",
+ "track_changes": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "MOL-.YYYY.-.####",
+   "default": "MOL-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "loom",
+   "fieldtype": "Link",
+   "label": "Loom / Machine",
+   "options": "Loom",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "log_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "shift",
+   "fieldtype": "Select",
+   "label": "Shift",
+   "options": "Morning\nEvening\nNight",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_output",
+   "fieldtype": "Section Break",
+   "label": "Output"
+  },
+  {
+   "fieldname": "meters_produced",
+   "fieldtype": "Float",
+   "label": "Meters Produced",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_output",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "runtime_minutes",
+   "fieldtype": "Int",
+   "label": "Runtime (Minutes)",
+   "reqd": 1,
+   "description": "Total active runtime in minutes"
+  },
+  {
+   "fieldname": "defect_count",
+   "fieldtype": "Int",
+   "label": "Defect Count",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status & Notes"
+  },
+  {
+   "fieldname": "downtime_reason",
+   "fieldtype": "Select",
+   "label": "Downtime Reason",
+   "options": "\nMechanical Failure\nPower Outage\nMaterial Shortage\nOperator Absence\nScheduled Maintenance\nChangeover\nOther"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1, "write": 1, "create": 1, "delete": 1,
+   "email": 1, "print": 1, "import": 1, "export": 1, "report": 1, "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

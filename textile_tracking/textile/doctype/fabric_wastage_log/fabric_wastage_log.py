@@ -22,11 +22,19 @@ class FabricWastageLog(Document):
 			self.wastage_pct = 0.0
 
 	def before_insert(self):
-		"""Auto-fetch contractor from Job Work Order if linked."""
-		if self.job_work_order and not self.contractor:
-			jwo = frappe.db.get_value("Job Work Order", self.job_work_order, "contractor")
+		"""Auto-fetch contractor and raw material batch from Job Work Order if linked."""
+		if self.job_work_order:
+			jwo = frappe.db.get_value(
+				"Job Work Order",
+				self.job_work_order,
+				["contractor", "raw_material_batch"],
+				as_dict=True,
+			)
 			if jwo:
-				self.contractor = jwo
+				if not self.contractor:
+					self.contractor = jwo.contractor
+				if not self.raw_material_batch:
+					self.raw_material_batch = jwo.raw_material_batch
 
 	def on_update_after_submit(self):
 		"""Trigger high wastage alert if applicable."""

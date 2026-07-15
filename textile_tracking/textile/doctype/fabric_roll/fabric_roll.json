@@ -1,0 +1,243 @@
+{
+ "doctype": "DocType",
+ "name": "Fabric Roll",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 1,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "FBR-.YYYY.-.####",
+ "title_field": "roll_number",
+ "track_changes": 1,
+ "track_views": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FBR-.YYYY.-.####",
+   "default": "FBR-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "roll_number",
+   "fieldtype": "Data",
+   "label": "Roll Number",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "description": "Physical roll identifier (e.g., FBR-2407-001)"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "In Production\nCompleted\nQuarantine\nDispatched",
+   "default": "In Production",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "source_item",
+   "fieldtype": "Link",
+   "label": "Fabric Item",
+   "options": "Item",
+   "in_list_view": 1,
+   "description": "The finished fabric item code"
+  },
+  {
+   "fieldname": "production_stage",
+   "fieldtype": "Select",
+   "label": "Production Stage",
+   "options": "Grey Fabric\nBleached\nDyed\nPrinted\nFinished\nProcessed",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "traceability_section",
+   "fieldtype": "Section Break",
+   "label": "Traceability"
+  },
+  {
+   "fieldname": "raw_material_batch",
+   "fieldtype": "Link",
+   "label": "Raw Material Batch",
+   "options": "Raw Material Batch",
+   "search_index": 1,
+   "description": "Link to the original raw material batch used to produce this fabric"
+  },
+  {
+   "fieldname": "column_break_trace",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "job_work_order",
+   "fieldtype": "Link",
+   "label": "Job Work Order",
+   "options": "Job Work Order",
+   "search_index": 1,
+   "description": "The job work order that produced or processed this roll"
+  },
+  {
+   "fieldname": "contractor",
+   "fieldtype": "Link",
+   "label": "Last Contractor",
+   "options": "Job Contractor",
+   "search_index": 1,
+   "description": "The contractor who last processed this roll"
+  },
+  {
+   "fieldname": "measurements_section",
+   "fieldtype": "Section Break",
+   "label": "Measurements"
+  },
+  {
+   "fieldname": "length_meters",
+   "fieldtype": "Float",
+   "label": "Length (Meters)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_measure",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "width_cm",
+   "fieldtype": "Float",
+   "label": "Width (CM)",
+   "description": "Fabric width in centimeters"
+  },
+  {
+   "fieldname": "weight_kg",
+   "fieldtype": "Float",
+   "label": "Weight (KG)",
+   "description": "Gross weight in kilograms"
+  },
+  {
+   "fieldname": "quality_section",
+   "fieldtype": "Section Break",
+   "label": "Quality"
+  },
+  {
+   "fieldname": "grade",
+   "fieldtype": "Select",
+   "label": "Grade",
+   "options": "Premium\nA\nB\nC\nReject",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_quality",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quality_status",
+   "fieldtype": "Select",
+   "label": "Quality Status",
+   "options": "Passed\nQuarantine\nFailed"
+  },
+  {
+   "fieldname": "production_date",
+   "fieldtype": "Date",
+   "label": "Production Date",
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "digital_passport_section",
+   "fieldtype": "Section Break",
+   "label": "Digital Product Passport",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "qr_code_text",
+   "fieldtype": "Data",
+   "label": "Passport QR URL",
+   "read_only": 1,
+   "description": "Auto-generated URL for the Digital Product Passport page"
+  },
+  {
+   "fieldname": "process_history_section",
+   "fieldtype": "Section Break",
+   "label": "Process History"
+  },
+  {
+   "fieldname": "process_history",
+   "fieldtype": "Table",
+   "label": "Process History",
+   "options": "Process History Entry",
+   "description": "Chronological record of all processes applied to this roll"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Fabric Roll",
+   "no_copy": 1,
+   "hidden": 1,
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 1,
+   "cancel": 1,
+   "submit": 1,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 1,
+   "cancel": 1,
+   "submit": 1,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Contractor Coordinator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

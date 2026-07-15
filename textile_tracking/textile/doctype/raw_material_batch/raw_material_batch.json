@@ -1,0 +1,195 @@
+{
+ "doctype": "DocType",
+ "name": "Raw Material Batch",
+ "module": "Textile",
+ "is_custom": 0,
+ "is_submittable": 0,
+ "is_virtual": 0,
+ "is_tree": 0,
+ "is_child_table": 0,
+ "is_table": 0,
+ "is_single": 0,
+ "editable_grid": 1,
+ "autoname": "naming_series:",
+ "naming_series": "RMB-.YYYY.-.####",
+ "title_field": "batch_id",
+ "track_changes": 1,
+ "track_views": 1,
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "RMB-.YYYY.-.####",
+   "default": "RMB-.YYYY.-.####",
+   "reqd": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "batch_id",
+   "fieldtype": "Data",
+   "label": "Batch ID",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "description": "Human-readable identifier for this raw material batch (e.g., COT-2024-001)"
+  },
+  {
+   "fieldname": "material_type",
+   "fieldtype": "Select",
+   "label": "Material Type",
+   "options": "Cotton\nPolyester\nBlended\nLinen\nSilk\nWool\nViscose\nNylon\nOther",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "supplier_batch_no",
+   "fieldtype": "Data",
+   "label": "Supplier Batch No",
+   "description": "Batch/lot number as labeled by the supplier"
+  },
+  {
+   "fieldname": "origin_country",
+   "fieldtype": "Data",
+   "label": "Country of Origin",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "certification_section",
+   "fieldtype": "Section Break",
+   "label": "Certification & Sustainability"
+  },
+  {
+   "fieldname": "certification_type",
+   "fieldtype": "Select",
+   "label": "Certification Type",
+   "options": "\nGOTS\nOEKO-TEX\nBCI\nFair Trade\nOrganic\nRCS\nGRS\nNone",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_cert",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "organic_cert_id",
+   "fieldtype": "Data",
+   "label": "Certification ID",
+   "description": "Certificate number or document ID for traceability"
+  },
+  {
+   "fieldname": "gots_certified",
+   "fieldtype": "Check",
+   "label": "GOTS Certified",
+   "description": "Global Organic Textile Standard certified"
+  },
+  {
+   "fieldname": "receiving_section",
+   "fieldtype": "Section Break",
+   "label": "Receiving Details"
+  },
+  {
+   "fieldname": "received_date",
+   "fieldtype": "Date",
+   "label": "Received Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_qty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UOM",
+   "options": "UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "quality_grade",
+   "fieldtype": "Select",
+   "label": "Quality Grade",
+   "options": "Premium\nStandard A\nStandard B\nC\nReject",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "section_break_notes",
+   "fieldtype": "Section Break",
+   "label": "Additional Information"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "amend": 0,
+   "cancel": 0,
+   "submit": 0,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "import": 1,
+   "export": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Contractor Coordinator",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "All",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

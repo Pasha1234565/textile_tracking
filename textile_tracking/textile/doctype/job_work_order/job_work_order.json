@@ -68,6 +68,33 @@
    "description": "Rate per piece from contractor rate card, entered or auto-matched"
   },
   {
+   "fieldname": "traceability_section",
+   "fieldtype": "Section Break",
+   "label": "Traceability",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "raw_material_batch",
+   "fieldtype": "Link",
+   "label": "Raw Material Batch",
+   "options": "Raw Material Batch",
+   "search_index": 1,
+   "description": "Link to the raw material batch used in this job work order"
+  },
+  {
+   "fieldname": "column_break_trace",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fabric_roll",
+   "fieldtype": "Link",
+   "label": "Fabric Roll",
+   "options": "Fabric Roll",
+   "search_index": 1,
+   "read_only": 1,
+   "description": "Auto-set when Fabric Roll is submitted against this JWO"
+  },
+  {
    "fieldname": "section_break_dates",
    "fieldtype": "Section Break",
    "label": "Dates"
