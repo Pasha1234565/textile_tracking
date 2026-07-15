@@ -28,12 +28,10 @@ doctype_class = {}
 
 # Document Events
 # ------------------------------
-doc_events = {
-	"Job Work Order": {
-		"on_submit": "textile_tracking.textile.api.create_subcontract_transfer",
-		"on_update_after_submit": "textile_tracking.textile.api.create_receipt_entry",
-	}
-}
+# Note: on_submit and on_update_after_submit are handled directly
+# in the JobWorkOrder DocType class (job_work_order.py).
+# Hooks are NOT needed here and would cause double-triggering.
+doc_events = {}
 
 # Scheduled Tasks
 # ------------------------------
