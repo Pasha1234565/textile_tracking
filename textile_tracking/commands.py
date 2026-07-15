@@ -84,7 +84,7 @@ def insert_demo_data_command():
 			frappe.db.rollback()
 			loom_check = True  # Skip inserts but don't pretend data exists
 			tables_ready = False
-			print("⏭️  New feature tables not installed yet — run 'bench --site mysite.local migrate' first, then re-run")
+			print(f"⏭️  New feature tables not installed yet — run 'bench --site {frappe.local.site} migrate' first, then re-run")
 
 		if tables_ready and not loom_check:
 			print("Inserting demo data for new features...")
