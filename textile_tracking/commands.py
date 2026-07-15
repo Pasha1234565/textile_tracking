@@ -1,9 +1,50 @@
 from __future__ import unicode_literals
 
+import os
+import sys
+
 import click
 
 import frappe
 from frappe.utils import today, add_days, now_datetime
+
+
+def _init_frappe():
+	"""Ensure frappe is initialized and connected for the current site.
+
+	The bench CLI does NOT always call frappe.init() before dispatching
+	to custom app commands. This helper detects whether init has been
+	done by checking for frappe.local.conf, and if missing, finds the
+	site name from sys.argv and calls frappe.init() + frappe.connect().
+	"""
+	try:
+		# Check if frappe is already initialized
+		_ = frappe.local.conf
+	except AttributeError:
+		# frappe.init() hasn't been called — find site from CLI args
+		site = None
+		for i, arg in enumerate(sys.argv):
+			if arg == '--site' and i + 1 < len(sys.argv):
+				site = sys.argv[i + 1]
+				break
+			if arg.startswith('--site='):
+				site = arg.split('=', 1)[1]
+				break
+
+		if not site:
+			site = os.environ.get('FRAPPE_SITE')
+
+		if not site:
+			print("❌ Error: Could not determine site name.")
+			print("   Usage: bench --site <sitename> insert-demo-data")
+			sys.exit(1)
+
+		frappe.init(site=site)
+
+	# Now connect to the database
+	frappe.connect()
+
+
 @click.command("insert-demo-data")
 def insert_demo_data_command():
 	"""Insert demo data for Textile Tracking app.
@@ -11,7 +52,7 @@ def insert_demo_data_command():
 	Usage:
 		bench --site [site] insert-demo-data
 	"""
-	frappe.connect()
+	_init_frappe()
 	try:
 		# Phase 1: Core demo data (contractors, JWOs, wastage logs, raw materials, fabric rolls)
 		if not frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
@@ -62,7 +103,7 @@ def insert_demo_data():
 		import textile_tracking.commands
 		textile_tracking.commands.insert_demo_data()
 	"""
-	frappe.connect()
+	_init_frappe()
 	try:
 		if frappe.db.sql("SELECT name FROM `tabJob Contractor` LIMIT 1"):
 			print("✅ Demo data already exists, skipping")
