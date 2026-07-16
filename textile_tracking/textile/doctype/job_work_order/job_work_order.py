@@ -54,16 +54,17 @@ class JobWorkOrder(Document):
 
 	def create_stock_transfer_on_send(self):
 		"""Create Stock Entry for material transfer to subcontractor."""
-		# Check if column exists before accessing to avoid Unknown Column errors
-		if not frappe.db.has_column("Stock Settings", "allow_material_transfer_to_subcontractor"):
-			return
-
 		try:
+			# Check if column/table exists before accessing to avoid errors
+			if not frappe.db.has_column("Stock Settings", "allow_material_transfer_to_subcontractor"):
+				return
+
 			if frappe.db.get_single_value("Stock Settings", "allow_material_transfer_to_subcontractor"):
 				from textile_tracking.textile.api import create_subcontract_transfer
 
 				create_subcontract_transfer(self)
 		except Exception:
+			# Table or column may not exist in this ERPNext version — skip silently
 			pass
 
 	def reconcile_returns(self):
