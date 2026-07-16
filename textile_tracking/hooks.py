@@ -59,9 +59,12 @@ website_route_rules = [
 # ------------------------------
 # jinja = {}
 
-# Run after every bench migrate to ensure child table columns exist
+# Run on first request to fix child table parent columns
 # ------------------------------
-after_migrate = ["textile_tracking.patches.fix_child_table_parent_columns.execute"]
+# The __init__.py auto-fix and patches don't always fire because Frappe's
+# DB may not be connected at import time, and patches get logged as executed.
+# before_request is the most reliable hook because frappe.db is always connected.
+before_request = ["textile_tracking.patches.fix_child_table_parent_columns.try_fix_once"]
 
 # Boot
 # ------------------------------

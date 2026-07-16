@@ -2,6 +2,24 @@ from __future__ import unicode_literals
 
 import frappe
 
+def try_fix_once():
+	"""Run the fix once per server start using a cache flag.
+
+	This is called from the `before_request` hook in hooks.py, which fires
+	before every HTTP request. The cache flag ensures the ALTER TABLE only
+	runs on the very first request, and is skipped for all subsequent requests.
+
+	This is the most reliable mechanism because `frappe.db` is ALWAYS
+	connected when `before_request` fires.
+	"""
+	from frappe.cache_manager import cache as frappe_cache
+
+	if frappe_cache().get_value("textile_child_tables_fixed"):
+		return
+
+	fix_all_child_tables()
+	frappe_cache().set_value("textile_child_tables_fixed", True)
+
 
 def execute():
 	"""Add parent/parenttype/parentfield columns to all Textile child tables.

@@ -29,15 +29,9 @@ def ensure_child_tables_fixed():
 		fix_all_child_tables()
 		_child_tables_fixed = True
 		print("Child table parent columns verified")
-	except Exception as e:
-		# Not all Frappe components may be initialized yet — will retry
-		# on next migrate via the after_migrate hook
-		import frappe
-
-		frappe.log_error(
-			title="Textile: Child table fix skipped",
-			message=f"Could not fix child tables: {e}",
-		)
+	except Exception:
+		# Frappe may not be initialized yet — will retry on after_migrate hook
+		pass
 
 
 # Auto-run on app import during frappe app initialization
