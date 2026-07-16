@@ -5,3 +5,4 @@ textile_tracking.patches.create_textile_tracking_module
 textile_tracking.patches.setup_workflow_notifications
 textile_tracking.patches.fix_child_table_parent_columns
 textile_tracking.patches.add_demo_data
+textile_tracking.patches.create_wastage_chart

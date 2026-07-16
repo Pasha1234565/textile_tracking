@@ -20,7 +20,6 @@ fixtures = [
 	{"dt": "Workflow Action", "filters": [["workflow_name", "=", "Job Work Order Workflow"]]},
 	{"dt": "Role", "filters": [["name", "in", ["Job Work Manager", "Contractor Coordinator"]]]},
 	{"dt": "Notification", "filters": [["document_type", "in", ["Job Work Order", "Fabric Wastage Log"]]]},
-	{"dt": "Dashboard Chart", "filters": [["name", "=", "Wastage Trend Overview"]]},
 ]
 
 # DocType Class
