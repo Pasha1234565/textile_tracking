@@ -27,7 +27,7 @@ def execute():
             "report_name": "Contractor Wastage Trend",
             "module": "Textile",
             "is_public": 1,
-            "is_standard": 1,
+            "is_standard": 0,
             "filters_json": "{}",
             "timeseries": 0,
         })
