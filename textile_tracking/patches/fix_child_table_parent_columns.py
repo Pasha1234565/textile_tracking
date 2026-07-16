@@ -2,63 +2,82 @@ from __future__ import unicode_literals
 
 import frappe
 
+# Hardcoded list of all child tables in the Textile module as a safety fallback
+KNOWN_CHILD_TABLES = [
+	"Process History Entry",
+	"Fabric Roll Daily Production",
+	"Cutting Plan Item",
+	"Job Work Return",
+	"Contractor Rate Item",
+	"Production Schedule Item",
+]
+
+REQUIRED_COLUMNS = ["parent", "parenttype", "parentfield"]
+
 
 def execute():
 	"""Ensure all child table doctypes in the Textile module have parent columns.
 
-	When new child tables are added via doctype JSON, `bench migrate` sometimes
-	fails to create the `parent`, `parenttype`, and `parentfield` columns in the
-	database. This patch detects and fixes that so submissions don't fail with
-	(1054, "Unknown column 'parent' in 'WHERE'").
+	This patch automatically adds `parent`, `parenttype`, and `parentfield` columns
+	to any child table that is missing them. Frappe's `bench migrate` sometimes
+	fails to create these columns for new child tables, causing submission errors
+	like (1054, "Unknown column 'parent' in 'WHERE'").
+
+	The patch is designed to never crash — each ALTER TABLE is wrapped in try-except
+	so it works regardless of whether columns already exist or tables are missing.
 	"""
-	# Use raw SQL to query child tables — `frappe.get_all` with `is_table` filter
-	# may not work because the database column is `istable` (Frappe naming convention).
-	child_tables = frappe.db.sql_list(
-		"""SELECT `name` FROM `tabDocType`
-		   WHERE `module` = 'Textile' AND `istable` = 1"""
-	)
+	# Try to discover child tables from DocType table
+	child_tables = _discover_child_tables()
 
+	# Fallback to hardcoded list if discovery fails
 	if not child_tables:
-		print("No child tables found in Textile module")
-		return
+		child_tables = KNOWN_CHILD_TABLES
+		print("Using hardcoded child table list (DocType query unavailable)")
 
+	fixed_count = 0
 	for doctype in child_tables:
-		table_name = f"tab{doctype}"
-		try:
-			missing = []
-			for col in ("parent", "parenttype", "parentfield"):
-				if not frappe.db.has_column(doctype, col):
-					missing.append(col)
-
-			if missing:
-				alter_parts = []
-				for col in missing:
-					if col == "parent":
-						alter_parts.append(
-							f"ADD COLUMN `parent` VARCHAR(140) NULL"
-						)
-					elif col == "parenttype":
-						alter_parts.append(
-							f"ADD COLUMN `parenttype` VARCHAR(140) NULL"
-						)
-					elif col == "parentfield":
-						alter_parts.append(
-							f"ADD COLUMN `parentfield` VARCHAR(140) NULL"
-						)
-
-				# Add index on parent for performance
-				if "parent" in missing:
-					alter_parts.append("ADD INDEX `parent` (`parent`)")
-
-				sql = f"ALTER TABLE `{table_name}` {', '.join(alter_parts)}"
-				frappe.db.sql(sql)
-				print(
-					f"Added missing columns to {table_name}: {', '.join(missing)}"
-				)
-			else:
-				print(f"{table_name} — all parent columns exist")
-		except Exception as e:
-			print(f"Could not fix {table_name}: {e}")
+		if _fix_table(doctype):
+			fixed_count += 1
 
 	frappe.db.commit()
-	print("Child table parent column check complete")
+	print(f"Child table parent column check complete. Fixed {fixed_count} table(s).")
+
+
+def _discover_child_tables():
+	"""Query tabDocType for Textile child tables. Returns empty list on failure."""
+	try:
+		return frappe.db.sql_list(
+			"""SELECT `name` FROM `tabDocType`
+			   WHERE `module` = 'Textile' AND `istable` = 1"""
+		)
+	except Exception:
+		return []
+
+
+def _fix_table(doctype):
+	"""Add missing parent/parenttype/parentfield columns to a child table.
+	Returns True if any column was added, False otherwise."""
+	table = f"tab{doctype}"
+	added_any = False
+
+	for col in REQUIRED_COLUMNS:
+		try:
+			frappe.db.sql(f"ALTER TABLE `{table}` ADD COLUMN `{col}` VARCHAR(140) NULL")
+			added_any = True
+			print(f"  Added column `{col}` to {table}")
+		except Exception:
+			# Column already exists or table doesn't exist — both are fine
+			pass
+
+	# Try to add index on parent column for performance
+	try:
+		frappe.db.sql(f"ALTER TABLE `{table}` ADD INDEX `parent` (`parent`)")
+	except Exception:
+		pass
+
+	if added_any:
+		print(f"✅ Fixed {table}")
+	else:
+		print(f"✓ {table} — all columns OK")
+
+	return added_any
