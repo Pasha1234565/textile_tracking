@@ -56,137 +56,228 @@
  ],
  "links": [
   {
-   "group": "Traceability",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Traceability",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Raw Material Batch",
+   "link_count": 0,
    "link_to": "Raw Material Batch",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Track incoming raw materials with certifications and origin",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Traceability",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Fabric Roll",
+   "link_count": 0,
    "link_to": "Fabric Roll",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Track finished fabric rolls with full genealogy and DPP QR",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Production",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Production",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Job Work Order",
+   "link_count": 0,
    "link_to": "Job Work Order",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Create and manage job work orders sent to contractors",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Production",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Production Schedule",
+   "link_count": 0,
    "link_to": "Production Schedule",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Plan loom/machine assignments by shift",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Production",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Machine Output Log",
+   "link_count": 0,
    "link_to": "Machine Output Log",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Record daily loom output, defects, and runtime",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Master Data",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Master Data",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Job Contractor",
+   "link_count": 0,
    "link_to": "Job Contractor",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Manage contractor details, rate cards, and wastage benchmarks",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Master Data",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Loom",
+   "link_count": 0,
    "link_to": "Loom",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Manage loom/machine master records",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cutting & Waste",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Cutting Plan",
+   "link_count": 0,
    "link_to": "Cutting Plan",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Auto-optimized cutting with 2D nesting algorithm",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Pattern Template",
+   "link_count": 0,
    "link_to": "Pattern Template",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Define pattern pieces and their dimensions",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Fabric Wastage Log",
+   "link_count": 0,
    "link_to": "Fabric Wastage Log",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Track fabric wastage entries logged daily",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Vendor Portal",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vendor Portal",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Vendor Delivery Schedule",
+   "link_count": 0,
    "link_to": "Vendor Delivery Schedule",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Manage supplier delivery timelines",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Reports",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 0,
+   "onboard": 1,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
    "label": "Contractor Wastage Trend",
+   "link_count": 0,
    "link_to": "Contractor Wastage Trend",
-   "is_query_report": 1,
+   "link_type": "Report",
    "onboard": 1,
-   "description": "Analyze wastage percentage trends across contractors over time",
-   "link_type": "Report"
+   "type": "Link"
   },
   {
-   "group": "Reports",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "True Cost Per Piece by Contractor",
+   "link_count": 0,
    "link_to": "True Cost Per Piece by Contractor",
-   "is_query_report": 0,
+   "link_type": "Report",
    "onboard": 1,
-   "description": "View true landed cost per piece including wastage adjustment",
-   "link_type": "Report"
+   "type": "Link"
   },
   {
-   "group": "Reports",
-   "label": "Overdue Job Work Orders",
-   "link_to": "Overdue Job Work Orders",
+   "dependencies": "",
+   "hidden": 0,
    "is_query_report": 1,
+   "label": "Overdue Job Work Orders",
+   "link_count": 0,
+   "link_to": "Overdue Job Work Orders",
+   "link_type": "Report",
    "onboard": 1,
-   "description": "View job work orders past expected return date",
-   "link_type": "Report"
+   "type": "Link"
   },
   {
-   "group": "Reports",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Cutting Efficiency",
+   "link_count": 0,
    "link_to": "Cutting Efficiency",
-   "is_query_report": 0,
+   "link_type": "Report",
    "onboard": 1,
-   "description": "Analyze cutting plan waste percentages",
-   "link_type": "Report"
+   "type": "Link"
   },
   {
-   "group": "Reports",
-   "label": "Lot Genealogy",
-   "link_to": "Lot Genealogy",
+   "dependencies": "",
+   "hidden": 0,
    "is_query_report": 0,
+   "label": "Lot Genealogy",
+   "link_count": 0,
+   "link_to": "Lot Genealogy",
+   "link_type": "Report",
    "onboard": 1,
-   "description": "Trace raw material batches through to finished fabric rolls",
-   "link_type": "Report"
+   "type": "Link"
   }
  ],
  "charts": [
