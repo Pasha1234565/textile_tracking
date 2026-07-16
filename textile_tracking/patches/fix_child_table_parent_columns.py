@@ -11,10 +11,11 @@ def execute():
 	database. This patch detects and fixes that so submissions don't fail with
 	(1054, "Unknown column 'parent' in 'WHERE'").
 	"""
-	child_tables = frappe.get_all(
-		"DocType",
-		filters={"module": "Textile", "is_table": 1},
-		pluck="name",
+	# Use raw SQL to query child tables — `frappe.get_all` with `is_table` filter
+	# may not work because the database column is `istable` (Frappe naming convention).
+	child_tables = frappe.db.sql_list(
+		"""SELECT `name` FROM `tabDocType`
+		   WHERE `module` = 'Textile' AND `istable` = 1"""
 	)
 
 	if not child_tables:
@@ -52,12 +53,12 @@ def execute():
 				sql = f"ALTER TABLE `{table_name}` {', '.join(alter_parts)}"
 				frappe.db.sql(sql)
 				print(
-					f"✅ Added missing columns to {table_name}: {', '.join(missing)}"
+					f"Added missing columns to {table_name}: {', '.join(missing)}"
 				)
 			else:
-				print(f"✓ {table_name} — all parent columns exist")
+				print(f"{table_name} — all parent columns exist")
 		except Exception as e:
-			print(f"⚠️  Could not fix {table_name}: {e}")
+			print(f"Could not fix {table_name}: {e}")
 
 	frappe.db.commit()
-	print("✅ Child table parent column check complete")
+	print("Child table parent column check complete")
