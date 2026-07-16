@@ -26,6 +26,8 @@ def execute():
 	The patch is designed to never crash — each ALTER TABLE is wrapped in try-except
 	so it works regardless of whether columns already exist or tables are missing.
 	"""
+	print("Checking Textile child table parent columns...")
+
 	# Try to discover child tables from DocType table
 	child_tables = _discover_child_tables()
 
