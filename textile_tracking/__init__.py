@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-import frappe
-
 __version__ = "0.1.0"
 
 # Global flag to ensure child table fix runs only once per process lifetime
@@ -21,6 +19,8 @@ def ensure_child_tables_fixed():
 	if _child_tables_fixed:
 		return
 
+	import frappe
+
 	try:
 		from textile_tracking.patches.fix_child_table_parent_columns import (
 			fix_all_child_tables,
@@ -28,10 +28,16 @@ def ensure_child_tables_fixed():
 
 		fix_all_child_tables()
 		_child_tables_fixed = True
-	except Exception:
+		print("Child table parent columns verified")
+	except Exception as e:
 		# Not all Frappe components may be initialized yet — will retry
 		# on next migrate via the after_migrate hook
-		pass
+		import frappe
+
+		frappe.log_error(
+			title="Textile: Child table fix skipped",
+			message=f"Could not fix child tables: {e}",
+		)
 
 
 # Auto-run on app import during frappe app initialization
