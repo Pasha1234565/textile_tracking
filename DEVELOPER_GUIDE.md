@@ -51,10 +51,10 @@ textile_tracking/
 │   │   ├── contractor_wastage_trend/ # Report: Wastage % Trend
 │   │   │   ├── contractor_wastage_trend.json
 │   │   │   └── contractor_wastage_trend.py
-│   │   ├── true_cost_per_piece/      # Report: True Cost Analysis
+│   │   ├── true_cost_per_piece_by_contractor/  # Report: True Cost Per Piece by Contractor
 │   │   │   ├── __init__.py
-│   │   │   ├── true_cost_per_piece.json
-│   │   │   └── true_cost_per_piece.py
+│   │   │   ├── true_cost_per_piece_by_contractor.json
+│   │   │   └── true_cost_per_piece_by_contractor.py
 │   │   └── overdue_job_work_orders/  # Report: Overdue Orders
 │   │       ├── __init__.py
 │   │       └── overdue_job_work_orders.json
