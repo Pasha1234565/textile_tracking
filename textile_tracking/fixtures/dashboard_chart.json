@@ -1,6 +1,7 @@
 [
  {
   "doctype": "Dashboard Chart",
+  "name": "Wastage Trend Overview",
   "chart_name": "Wastage Trend Overview",
   "chart_type": "Line",
   "source": "Report",
