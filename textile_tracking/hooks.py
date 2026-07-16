@@ -59,6 +59,10 @@ website_route_rules = [
 # ------------------------------
 # jinja = {}
 
+# Run after every bench migrate to ensure child table columns exist
+# ------------------------------
+after_migrate = ["textile_tracking.patches.fix_child_table_parent_columns.execute"]
+
 # Boot
 # ------------------------------
 # boot_session = boot_session
