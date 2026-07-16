@@ -1,3 +1,56 @@
+function compute_estimates_client_side(frm) {
+	// Standard fabric requirements (matching the Python dict)
+	var fabric_req = {
+		'Shirt': { 'S': 1.2, 'M': 1.4, 'L': 1.6, 'XL': 1.8, 'XXL': 2.0 },
+		'T-Shirt': { 'S': 0.8, 'M': 1.0, 'L': 1.2, 'XL': 1.4, 'XXL': 1.6 },
+		'Blouse': { 'S': 0.7, 'M': 0.8, 'L': 0.9, 'XL': 1.0, 'XXL': 1.1 },
+		'Kurta': { 'S': 1.5, 'M': 1.7, 'L': 1.9, 'XL': 2.1, 'XXL': 2.3 },
+		'Saree': { 'S': 5.5, 'M': 5.5, 'L': 5.5, 'XL': 5.5, 'XXL': 5.5 },
+		'Suit Set': { 'S': 2.5, 'M': 2.8, 'L': 3.1, 'XL': 3.4, 'XXL': 3.7 },
+		'Trouser / Pant': { 'S': 1.0, 'M': 1.1, 'L': 1.2, 'XL': 1.3, 'XXL': 1.5 },
+		'Skirt': { 'S': 0.8, 'M': 0.9, 'L': 1.0, 'XL': 1.1, 'XXL': 1.2 }
+	};
+
+	var gtype = frm.doc.garment_type;
+	var gsize = frm.doc.garment_size;
+	var length_m = frm.doc.length_meters || 0;
+	var rolls = frm.doc.rolls_given_to_contractor || 1;
+
+	var fabric_per = (fabric_req[gtype] && fabric_req[gtype][gsize]) || 0;
+	frm.set_value('estimated_fabric_per_garment', fabric_per);
+
+	if (fabric_per > 0 && length_m > 0) {
+		var per_roll = Math.floor(length_m / fabric_per);
+		frm.set_value('estimated_garments_per_roll', per_roll);
+		frm.set_value('total_estimated_garments', per_roll * rolls);
+	} else {
+		frm.set_value('estimated_garments_per_roll', 0);
+		frm.set_value('total_estimated_garments', 0);
+	}
+
+	refresh_summary(frm);
+}
+
+function refresh_summary(frm) {
+	var total_actual = 0;
+	if (frm.doc.daily_production && frm.doc.daily_production.length) {
+		$.each(frm.doc.daily_production, function(i, row) {
+			total_actual += flt(row.garments_produced);
+		});
+	}
+	frm.set_value('actual_total_produced', total_actual);
+
+	var estimated = frm.doc.total_estimated_garments || 0;
+	if (estimated > 0) {
+		var wastage = ((estimated - total_actual) / estimated) * 100;
+		frm.set_value('wastage_percentage', Math.round(wastage * 10) / 10);
+	} else {
+		frm.set_value('wastage_percentage', 0);
+	}
+}
+
+// ---- Form Events ----
+
 frappe.ui.form.on('Fabric Roll', {
 	refresh: function(frm) {
 		// Show QR code as an HTML preview if qr_code_text is populated
@@ -71,6 +124,9 @@ frappe.ui.form.on('Fabric Roll', {
 				}
 			});
 		}
+
+		// Recalculate summary on refresh (for saved docs)
+		refresh_summary(frm);
 	},
 
 	before_save: function(frm) {
@@ -86,5 +142,40 @@ frappe.ui.form.on('Fabric Roll', {
 			let site_url = window.location.origin;
 			frm.set_value('qr_code_text', `${site_url}/dpp/${frm.doc.name}`);
 		}
+	},
+
+	// ---- New field handlers ----
+
+	garment_type: function(frm) {
+		compute_estimates_client_side(frm);
+	},
+
+	garment_size: function(frm) {
+		compute_estimates_client_side(frm);
+	},
+
+	length_meters: function(frm) {
+		compute_estimates_client_side(frm);
+	},
+
+	rolls_given_to_contractor: function(frm) {
+		compute_estimates_client_side(frm);
+	}
+});
+
+// ---- Child Table Events (Daily Production) ----
+
+frappe.ui.form.on('Fabric Roll Daily Production', {
+	garments_produced: function(frm, cdt, cdn) {
+		refresh_summary(frm);
+	},
+
+	daily_production_add: function(frm, cdt, cdn) {
+		// Auto-set the date to today for new rows
+		frappe.model.set_value(cdt, cdn, 'date', frappe.datetime.now_date());
+	},
+
+	daily_production_remove: function(frm, cdt, cdn) {
+		refresh_summary(frm);
 	}
 });

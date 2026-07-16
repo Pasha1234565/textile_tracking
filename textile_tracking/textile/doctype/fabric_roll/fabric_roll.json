@@ -96,6 +96,66 @@
    "description": "The contractor who last processed this roll"
   },
   {
+   "fieldname": "contractor_production_section",
+   "fieldtype": "Section Break",
+   "label": "Contractor Production Details"
+  },
+  {
+   "fieldname": "rolls_given_to_contractor",
+   "fieldtype": "Int",
+   "label": "Rolls Given to Contractor",
+   "in_list_view": 1,
+   "default": 1,
+   "description": "Number of rolls provided to the contractor"
+  },
+  {
+   "fieldname": "garment_type",
+   "fieldtype": "Select",
+   "label": "Garment Type",
+   "options": "\nShirt\nT-Shirt\nBlouse\nKurta\nSaree\nSuit Set\nTrouser / Pant\nSkirt",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Type of garment being produced from this roll"
+  },
+  {
+   "fieldname": "column_break_garment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "garment_size",
+   "fieldtype": "Select",
+   "label": "Garment Size",
+   "options": "\nS\nM\nL\nXL\nXXL",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Size of the garment being produced"
+  },
+  {
+   "fieldname": "estimated_fabric_per_garment",
+   "fieldtype": "Float",
+   "label": "Est. Fabric per Garment (Meters)",
+   "read_only": 1,
+   "description": "Auto-calculated based on garment type and size"
+  },
+  {
+   "fieldname": "column_break_estimates",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "estimated_garments_per_roll",
+   "fieldtype": "Float",
+   "label": "Est. Garments per Roll",
+   "read_only": 1,
+   "description": "Auto-calculated: roll length / fabric per garment"
+  },
+  {
+   "fieldname": "total_estimated_garments",
+   "fieldtype": "Float",
+   "label": "Total Estimated Garments",
+   "read_only": 1,
+   "description": "Est. garments per roll × rolls given to contractor"
+  },
+  {
    "fieldname": "measurements_section",
    "fieldtype": "Section Break",
    "label": "Measurements"
@@ -154,6 +214,18 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "daily_production_section",
+   "fieldtype": "Section Break",
+   "label": "Daily Production Tracking"
+  },
+  {
+   "fieldname": "daily_production",
+   "fieldtype": "Table",
+   "label": "Daily Production Entries",
+   "options": "Fabric Roll Daily Production",
+   "description": "Record daily garment production from this roll"
+  },
+  {
    "fieldname": "digital_passport_section",
    "fieldtype": "Section Break",
    "label": "Digital Product Passport",
@@ -177,6 +249,34 @@
    "label": "Process History",
    "options": "Process History Entry",
    "description": "Chronological record of all processes applied to this roll"
+  },
+  {
+   "fieldname": "production_summary_section",
+   "fieldtype": "Section Break",
+   "label": "Production Summary & Wastage"
+  },
+  {
+   "fieldname": "actual_total_produced",
+   "fieldtype": "Float",
+   "label": "Actual Garments Produced",
+   "read_only": 1,
+   "description": "Sum of all daily production entries"
+  },
+  {
+   "fieldname": "column_break_wastage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "wastage_percentage",
+   "fieldtype": "Percent",
+   "label": "Wastage %",
+   "read_only": 1,
+   "description": "((Estimated - Actual) / Estimated) × 100"
+  },
+  {
+   "fieldname": "wastage_remarks",
+   "fieldtype": "Small Text",
+   "label": "Wastage Remarks"
   },
   {
    "fieldname": "amended_from",
