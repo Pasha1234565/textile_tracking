@@ -61,7 +61,10 @@ website_route_rules = [
 
 # Run after every bench migrate to ensure child table columns exist
 # ------------------------------
-after_migrate = ["textile_tracking.patches.fix_child_table_parent_columns.execute"]
+after_migrate = [
+	"textile_tracking.patches.fix_child_table_parent_columns.execute",
+	"textile_tracking.patches.create_wastage_chart.execute",
+]
 
 # Run on first HTTP request to fix child table parent columns
 # ------------------------------
