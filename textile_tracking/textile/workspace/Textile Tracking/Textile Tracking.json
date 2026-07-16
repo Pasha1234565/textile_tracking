@@ -1,250 +1,238 @@
 {
+ "creation": "2026-04-01 12:00:00.000000",
+ "docstatus": 0,
  "doctype": "Workspace",
- "name": "Textile Tracking",
- "title": "Textile Tracking",
- "workspace_name": "Textile Tracking",
- "module": "Textile",
- "is_standard": 1,
- "public": 1,
- "label": "Textile Tracking",
  "icon": "industry",
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Shortcuts\"}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Job Work Order\",\"type\":\"DocType\",\"link_to\":\"Job Work Order\",\"doc_view\":\"New\",\"icon\":\"product\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fabric Rolls\",\"type\":\"DocType\",\"link_to\":\"Fabric Roll\",\"doc_view\":\"New\",\"icon\":\"package\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Raw Material Batch\",\"type\":\"DocType\",\"link_to\":\"Raw Material Batch\",\"doc_view\":\"New\",\"icon\":\"inbox\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Loom / Machine\",\"type\":\"DocType\",\"link_to\":\"Loom\",\"doc_view\":\"New\",\"icon\":\"settings\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Cutting Plan\",\"type\":\"DocType\",\"link_to\":\"Cutting Plan\",\"doc_view\":\"New\",\"icon\":\"scissors\",\"onboard\":1}},{\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lot Genealogy\",\"type\":\"Report\",\"link_to\":\"Lot Genealogy\",\"icon\":\"git-branch\",\"onboard\":1}}]",
- "charts": [
-  {
-   "chart_name": "Wastage Trend Overview",
-   "label": "Wastage Trend Overview",
-   "chart_type": "Report",
-   "report_name": "Contractor Wastage Trend",
-   "width": "Full"
-  }
- ],
- "shortcuts": [
-  {
-   "label": "New Job Work Order",
-   "type": "DocType",
-   "link_to": "Job Work Order",
-   "doc_view": "New",
-   "icon": "product",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Fabric Rolls",
-   "type": "DocType",
-   "link_to": "Fabric Roll",
-   "doc_view": "New",
-   "icon": "package",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Raw Material Batch",
-   "type": "DocType",
-   "link_to": "Raw Material Batch",
-   "doc_view": "New",
-   "icon": "inbox",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Loom / Machine",
-   "type": "DocType",
-   "link_to": "Loom",
-   "doc_view": "New",
-   "icon": "settings",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Cutting Plan",
-   "type": "DocType",
-   "link_to": "Cutting Plan",
-   "doc_view": "New",
-   "icon": "scissors",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Lot Genealogy",
-   "type": "Report",
-   "link_to": "Lot Genealogy",
-   "doc_view": "",
-   "icon": "git-branch",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 1
-  },
-  {
-   "label": "Fabric Wastage Log",
-   "type": "DocType",
-   "link_to": "Fabric Wastage Log",
-   "doc_view": "List",
-   "icon": "list",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 0
-  },
-  {
-   "label": "Overdue Orders",
-   "type": "Report",
-   "link_to": "Overdue Job Work Orders",
-   "doc_view": "",
-   "icon": "warning",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 0
-  },
-  {
-   "label": "Contractor",
-   "type": "DocType",
-   "link_to": "Job Contractor",
-   "doc_view": "List",
-   "icon": "user",
-   "kanban_board": "",
-   "dependencies": "",
-   "onboard": 0
-  }
- ],
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Textile Tracking",
+ "module": "Textile",
+ "name": "Textile Tracking",
+ "owner": "Administrator",
+ "public": 1,
+ "sequence_id": 1.0,
+ "title": "Textile Tracking",
  "links": [
   {
-   "group": "Reports",
-   "label": "Contractor Wastage Trend",
-   "link_to": "Contractor Wastage Trend",
-   "is_query_report": 1,
-   "onboard": 1,
-   "description": "Analyze wastage percentage trends across contractors over time",
-   "link_type": "Report"
-  },
-  {
-   "group": "Reports",
-   "label": "True Cost Per Piece by Contractor",
-   "link_to": "True Cost Per Piece by Contractor",
+   "dependencies": "",
+   "hidden": 0,
    "is_query_report": 0,
-   "onboard": 1,
-   "description": "View true landed cost per piece including wastage adjustment",
-   "link_type": "Report"
-  },
-  {
-   "group": "Reports",
-   "label": "Overdue Job Work Orders",
-   "link_to": "Overdue Job Work Orders",
-   "is_query_report": 1,
-   "onboard": 1,
-   "description": "View job work orders past expected return date",
-   "link_type": "Report"
-  },
-  {
-   "group": "Reports",
-   "label": "Cutting Efficiency",
-   "link_to": "Cutting Efficiency",
-   "is_query_report": 0,
-   "onboard": 1,
-   "description": "Analyze cutting plan waste percentages",
-   "link_type": "Report"
-  },
-  {
-   "group": "Reports",
-   "label": "Lot Genealogy",
-   "link_to": "Lot Genealogy",
-   "is_query_report": 0,
-   "onboard": 1,
-   "description": "Trace raw material batches through to finished fabric rolls",
-   "link_type": "Report"
-  },
-  {
-   "group": "Traceability",
-   "label": "Raw Material Batch",
-   "link_to": "Raw Material Batch",
-   "onboard": 1,
-   "description": "Track incoming raw materials with certifications and origin",
-   "link_type": "DocType"
-  },
-  {
-   "group": "Traceability",
-   "label": "Fabric Roll",
-   "link_to": "Fabric Roll",
-   "onboard": 1,
-   "description": "Track finished fabric rolls with full genealogy and DPP QR",
-   "link_type": "DocType"
-  },
-  {
-   "group": "Production",
    "label": "Job Work Order",
+   "link_count": 0,
    "link_to": "Job Work Order",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Create and manage job work orders sent to contractors",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Production",
-   "label": "Production Schedule",
-   "link_to": "Production Schedule",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fabric Roll",
+   "link_count": 0,
+   "link_to": "Fabric Roll",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Plan loom/machine assignments by shift",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Production",
-   "label": "Machine Output Log",
-   "link_to": "Machine Output Log",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Raw Material Batch",
+   "link_count": 0,
+   "link_to": "Raw Material Batch",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Record daily loom output, defects, and runtime",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Cutting Plan",
+   "link_count": 0,
    "link_to": "Cutting Plan",
+   "link_type": "DocType",
    "onboard": 1,
-   "description": "Auto-optimized cutting with 2D nesting algorithm",
-   "link_type": "DocType"
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
-   "label": "Pattern Template",
-   "link_to": "Pattern Template",
-   "onboard": 1,
-   "description": "Define pattern pieces and their dimensions",
-   "link_type": "DocType"
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Raw Material Batch",
+   "link_count": 0,
+   "link_to": "Raw Material Batch",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
-   "group": "Cutting & Waste",
-   "label": "Fabric Wastage Log",
-   "link_to": "Fabric Wastage Log",
-   "onboard": 1,
-   "description": "Track fabric wastage entries logged daily",
-   "link_type": "DocType"
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fabric Roll",
+   "link_count": 0,
+   "link_to": "Fabric Roll",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
-   "group": "Vendor Portal",
-   "label": "Vendor Delivery Schedule",
-   "link_to": "Vendor Delivery Schedule",
-   "onboard": 1,
-   "description": "Manage supplier delivery timelines",
-   "link_type": "DocType"
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Job Work Order",
+   "link_count": 0,
+   "link_to": "Job Work Order",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
-   "group": "Master Data",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Production Schedule",
+   "link_count": 0,
+   "link_to": "Production Schedule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Machine Output Log",
+   "link_count": 0,
+   "link_to": "Machine Output Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Job Contractor",
+   "link_count": 0,
    "link_to": "Job Contractor",
-   "onboard": 1,
-   "description": "Manage contractor details, rate cards, and wastage benchmarks",
-   "link_type": "DocType"
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   },
   {
-   "group": "Master Data",
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
    "label": "Loom",
+   "link_count": 0,
    "link_to": "Loom",
-   "onboard": 1,
-   "description": "Manage loom/machine master records",
-   "link_type": "DocType"
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cutting Plan",
+   "link_count": 0,
+   "link_to": "Cutting Plan",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pattern Template",
+   "link_count": 0,
+   "link_to": "Pattern Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fabric Wastage Log",
+   "link_count": 0,
+   "link_to": "Fabric Wastage Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vendor Delivery Schedule",
+   "link_count": 0,
+   "link_to": "Vendor Delivery Schedule",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Contractor Wastage Trend",
+   "link_count": 0,
+   "link_to": "Contractor Wastage Trend",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "True Cost Per Piece by Contractor",
+   "link_count": 0,
+   "link_to": "True Cost Per Piece by Contractor",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Overdue Job Work Orders",
+   "link_count": 0,
+   "link_to": "Overdue Job Work Orders",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Cutting Efficiency",
+   "link_count": 0,
+   "link_to": "Cutting Efficiency",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Lot Genealogy",
+   "link_count": 0,
+   "link_to": "Lot Genealogy",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "number_cards": [],
- "custom_blocks": []
+ "content": "[{\"id\": \"a1b2c3d4\", \"type\": \"section\", \"data\": {\"label\": \"Quick Actions\", \"col\": 12}}, {\"id\": \"e5f6a7b8\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"New Job Work Order\", \"col\": 3}}, {\"id\": \"c9d0e1f2\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Fabric Rolls\", \"col\": 3}}, {\"id\": \"a3b4c5d6\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Raw Material Batch\", \"col\": 3}}, {\"id\": \"e7f8a9b0\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"Cutting Plan\", \"col\": 3}}, {\"id\": \"c1d2e3f4\", \"type\": \"section\", \"data\": {\"label\": \"Textile Operations\", \"col\": 12}}, {\"id\": \"a5b6c7d8\", \"type\": \"card\", \"data\": {\"card_name\": \"Traceability\", \"col\": 4, \"links\": [{\"type\": \"link\", \"label\": \"Raw Material Batch\", \"link_to\": \"Raw Material Batch\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Fabric Roll\", \"link_to\": \"Fabric Roll\", \"link_type\": \"DocType\"}]}}, {\"id\": \"e9f0a1b2\", \"type\": \"card\", \"data\": {\"card_name\": \"Production\", \"col\": 4, \"links\": [{\"type\": \"link\", \"label\": \"Job Work Order\", \"link_to\": \"Job Work Order\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Production Schedule\", \"link_to\": \"Production Schedule\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Machine Output Log\", \"link_to\": \"Machine Output Log\", \"link_type\": \"DocType\"}]}}, {\"id\": \"c3d4e5f6\", \"type\": \"card\", \"data\": {\"card_name\": \"Master Data\", \"col\": 4, \"links\": [{\"type\": \"link\", \"label\": \"Job Contractor\", \"link_to\": \"Job Contractor\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Loom\", \"link_to\": \"Loom\", \"link_type\": \"DocType\"}]}}, {\"id\": \"a7b8c9d0\", \"type\": \"section\", \"data\": {\"label\": \"Cutting & Vendor Management\", \"col\": 12}}, {\"id\": \"e1f2a3b4\", \"type\": \"card\", \"data\": {\"card_name\": \"Cutting & Waste\", \"col\": 6, \"links\": [{\"type\": \"link\", \"label\": \"Cutting Plan\", \"link_to\": \"Cutting Plan\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Pattern Template\", \"link_to\": \"Pattern Template\", \"link_type\": \"DocType\"}, {\"type\": \"link\", \"label\": \"Fabric Wastage Log\", \"link_to\": \"Fabric Wastage Log\", \"link_type\": \"DocType\"}]}}, {\"id\": \"c5d6e7f8\", \"type\": \"card\", \"data\": {\"card_name\": \"Vendor Portal\", \"col\": 6, \"links\": [{\"type\": \"link\", \"label\": \"Vendor Delivery Schedule\", \"link_to\": \"Vendor Delivery Schedule\", \"link_type\": \"DocType\"}]}}, {\"id\": \"a9b0c1d2\", \"type\": \"section\", \"data\": {\"label\": \"Reports & Analytics\", \"col\": 12}}, {\"id\": \"e3f4a5b6\", \"type\": \"card\", \"data\": {\"card_name\": \"Reports\", \"col\": 12, \"links\": [{\"type\": \"link\", \"label\": \"Contractor Wastage Trend\", \"link_to\": \"Contractor Wastage Trend\", \"link_type\": \"Report\"}, {\"type\": \"link\", \"label\": \"True Cost Per Piece by Contractor\", \"link_to\": \"True Cost Per Piece by Contractor\", \"link_type\": \"Report\"}, {\"type\": \"link\", \"label\": \"Overdue Job Work Orders\", \"link_to\": \"Overdue Job Work Orders\", \"link_type\": \"Report\"}, {\"type\": \"link\", \"label\": \"Cutting Efficiency\", \"link_to\": \"Cutting Efficiency\", \"link_type\": \"Report\"}, {\"type\": \"link\", \"label\": \"Lot Genealogy\", \"link_to\": \"Lot Genealogy\", \"link_type\": \"Report\"}]}}]"
 }
