@@ -1,0 +1,14 @@
+[
+ {
+  "chart_name": "Wastage Trend Overview",
+  "chart_type": "Line",
+  "source": "Report",
+  "report_name": "Contractor Wastage Trend",
+  "module": "Textile",
+  "is_public": 1,
+  "is_standard": 1,
+  "type": "Line",
+  "filters_json": "{}",
+  "timeseries": 0
+ }
+]
