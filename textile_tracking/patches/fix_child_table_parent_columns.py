@@ -32,6 +32,7 @@ def fix_all_child_tables():
 	"""The exact working code — add parent columns to ALL child tables."""
 	tables = [
 		"tabJob Work Return",
+		"tabJob Work Order Process",
 		"tabCutting Plan Item",
 		"tabFabric Roll Daily Production",
 		"tabProcess History Entry",
