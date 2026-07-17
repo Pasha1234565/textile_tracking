@@ -71,7 +71,6 @@
    "fieldtype": "Table",
    "label": "Processes",
    "options": "Job Work Order Process",
-   "reqd": 1,
    "description": "All subcontract processes for this garment, with per-process contractor, dates, and status tracking"
   },
   {

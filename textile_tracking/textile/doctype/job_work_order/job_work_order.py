@@ -22,6 +22,7 @@ GARMENT_PROCESS_MAP = {
 class JobWorkOrder(Document):
 	def validate(self):
 		self.auto_populate_processes()
+		self.validate_processes_required()
 		self.update_status_based_on_returns()
 		self.validate_close_conditions()
 
@@ -48,6 +49,20 @@ class JobWorkOrder(Document):
 				row.process_name = process_name
 				row.status = "Not Started"
 				row.qty_sent = self.qty_sent
+
+	def validate_processes_required(self):
+		"""Validate that at least one process row exists.
+
+		This runs AFTER auto_populate_processes() so auto-populated rows
+		will have already been added. We use this instead of reqd=1 on the
+		JSON field because Frappe's client-side reqd validation on Table
+		fields can be unreliable.
+		"""
+		if not self.get("processes") or len(self.get("processes")) == 0:
+			frappe.throw(
+				frappe._("At least one process is required. Please select a Garment Type to auto-populate processes or add them manually."),
+				title=frappe._("Processes Required"),
+			)
 
 	def update_status_based_on_returns(self):
 		"""Auto-update overall JWO status based on child table entries."""
