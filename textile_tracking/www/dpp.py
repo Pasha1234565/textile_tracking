@@ -47,15 +47,23 @@ def get_context(context):
 			as_dict=True,
 		)
 
-	# Get JWO details
+	# Get JWO details with processes
 	jwo = None
 	if roll.job_work_order:
 		jwo = frappe.db.get_value(
 			"Job Work Order",
 			roll.job_work_order,
-			["name", "subcontract_process", "contractor", "date_sent", "status"],
+			["name", "garment_type", "source_item", "qty_sent", "status"],
 			as_dict=True,
 		)
+		if jwo:
+			# Fetch all processes for this JWO
+			jwo.processes = frappe.db.get_all(
+				"Job Work Order Process",
+				filters={"parent": jwo.name, "parenttype": "Job Work Order"},
+				fields=["process_name", "contractor", "date_sent", "expected_return_date", "actual_return_date", "status"],
+				order_by="idx ASC",
+			)
 
 	# Get process history
 	process_history = frappe.db.get_all(

@@ -7,9 +7,21 @@ frappe.ui.form.on('Fabric Wastage Log', {
 	},
 	job_work_order: function(frm) {
 		if (cur_frm.doc.job_work_order) {
-			frappe.db.get_value('Job Work Order', cur_frm.doc.job_work_order, 'contractor', function(r) {
-				if (r && r.contractor) {
-					frm.set_value('contractor', r.contractor);
+			// Get the first process's contractor from the JWO
+			frappe.call({
+				method: 'frappe.client.get',
+				args: {
+					doctype: 'Job Work Order',
+					name: cur_frm.doc.job_work_order
+				},
+				callback: function(r) {
+					if (r.message && r.message.processes && r.message.processes.length) {
+						// Use the first process's contractor
+						var firstContractor = r.message.processes[0].contractor;
+						if (firstContractor) {
+							frm.set_value('contractor', firstContractor);
+						}
+					}
 				}
 			});
 		}

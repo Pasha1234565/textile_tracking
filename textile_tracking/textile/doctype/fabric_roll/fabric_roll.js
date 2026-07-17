@@ -110,14 +110,15 @@ frappe.ui.form.on('Fabric Roll', {
 				callback: function(r) {
 					if (r.message) {
 						let jwo = r.message;
-						frm.set_value('contractor', jwo.contractor);
-						// Auto-populate process history from JWO
-						if (jwo.subcontract_process && !frm.doc.process_history) {
-							let child = frm.add_child('process_history');
-							child.process_name = jwo.subcontract_process;
-							child.contractor = jwo.contractor;
-							child.date_completed = frappe.datetime.now_date();
-							child.notes = `Processed via ${jwo.name}`;
+						// Auto-populate process history from JWO processes
+						if (jwo.processes && jwo.processes.length && !frm.doc.process_history) {
+							jwo.processes.forEach(function(proc) {
+								let child = frm.add_child('process_history');
+								child.process_name = proc.process_name;
+								child.contractor = proc.contractor;
+								child.date_completed = frappe.datetime.now_date();
+								child.notes = `Processed via ${jwo.name}`;
+							});
 							frm.refresh_field('process_history');
 						}
 					}

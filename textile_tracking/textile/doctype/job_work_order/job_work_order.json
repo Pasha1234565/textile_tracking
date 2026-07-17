@@ -12,7 +12,7 @@
  "editable_grid": 1,
  "autoname": "naming_series:",
  "naming_series": "JWO-.YYYY.-.####",
- "title_field": "contractor",
+ "title_field": "source_item",
  "track_changes": 1,
  "track_views": 1,
  "workflow": 1,
@@ -27,14 +27,13 @@
    "hidden": 1
   },
   {
-   "fieldname": "contractor",
-   "fieldtype": "Link",
-   "label": "Contractor",
-   "options": "Job Contractor",
+   "fieldname": "garment_type",
+   "fieldtype": "Select",
+   "label": "Garment Type",
+   "options": "\nShirt\nT-Shirt\nSkirt\nSaree\nBlouse\nKurta\nJeans\nDress\nDupatta\nFabrics (Roll)",
    "reqd": 1,
    "in_list_view": 1,
-   "in_standard_filter": 1,
-   "search_index": 1
+   "in_standard_filter": 1
   },
   {
    "fieldname": "source_item",
@@ -52,20 +51,28 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "subcontract_process",
+   "fieldname": "status",
    "fieldtype": "Select",
-   "label": "Subcontract Process",
-   "options": "Cutting\nStitching\nDyeing\nEmbroidery\nFinishing",
+   "label": "Status",
+   "options": "Draft\nSent\nPartially Received\nReceived\nClosed",
+   "default": "Draft",
    "reqd": 1,
    "in_list_view": 1,
-   "in_standard_filter": 1
+   "in_standard_filter": 1,
+   "read_only": 1
   },
   {
-   "fieldname": "rate_per_piece",
-   "fieldtype": "Currency",
-   "label": "Rate Per Piece",
-   "read_only": 0,
-   "description": "Rate per piece from contractor rate card, entered or auto-matched"
+   "fieldname": "section_break_processes",
+   "fieldtype": "Section Break",
+   "label": "Processes"
+  },
+  {
+   "fieldname": "processes",
+   "fieldtype": "Table",
+   "label": "Processes",
+   "options": "Job Work Order Process",
+   "reqd": 1,
+   "description": "All subcontract processes for this garment, with per-process contractor, dates, and status tracking"
   },
   {
    "fieldname": "traceability_section",
@@ -93,40 +100,6 @@
    "search_index": 1,
    "read_only": 1,
    "description": "Auto-set when Fabric Roll is submitted against this JWO"
-  },
-  {
-   "fieldname": "section_break_dates",
-   "fieldtype": "Section Break",
-   "label": "Dates"
-  },
-  {
-   "fieldname": "date_sent",
-   "fieldtype": "Date",
-   "label": "Date Sent",
-   "reqd": 1,
-   "default": "Today",
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "column_break_dates",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "expected_return_date",
-   "fieldtype": "Date",
-   "label": "Expected Return Date",
-   "reqd": 1
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "label": "Status",
-   "options": "Draft\nSent\nPartially Received\nReceived\nClosed",
-   "default": "Draft",
-   "reqd": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "read_only": 1
   },
   {
    "fieldname": "section_break_returns",

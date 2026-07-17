@@ -205,6 +205,52 @@
 		</div>
 		{% endif %}
 
+		<!-- Job Work Order Process Overview -->
+		{% if jwo and jwo.processes %}
+		<div class="dpp-section-title">📋 Job Work Order: {{ jwo.name }}</div>
+		<div class="dpp-card" style="margin-bottom:20px;">
+			<table class="dpp-data-table">
+				<tr><td>Garment Type</td><td>{{ jwo.garment_type or 'N/A' }}</td></tr>
+				<tr><td>Source Item</td><td>{{ jwo.source_item or 'N/A' }}</td></tr>
+				<tr><td>Total Qty Sent</td><td>{{ jwo.qty_sent or '0' }}</td></tr>
+				<tr><td>JWO Status</td><td>{{ jwo.status or 'N/A' }}</td></tr>
+			</table>
+			<div style="margin-top:16px;">
+				<h4 style="font-size:13px;color:#6b7a8f;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;">Process Overview</h4>
+				<table class="dpp-data-table">
+					<thead>
+						<tr style="background:#f8fafc;">
+							<th style="text-align:left;padding:8px 12px;font-size:12px;color:#6b7a8f;font-weight:600;">Process</th>
+							<th style="text-align:left;padding:8px 12px;font-size:12px;color:#6b7a8f;font-weight:600;">Contractor</th>
+							<th style="text-align:left;padding:8px 12px;font-size:12px;color:#6b7a8f;font-weight:600;">Sent</th>
+							<th style="text-align:left;padding:8px 12px;font-size:12px;color:#6b7a8f;font-weight:600;">Expected Return</th>
+							<th style="text-align:left;padding:8px 12px;font-size:12px;color:#6b7a8f;font-weight:600;">Status</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for proc in jwo.processes %}
+						<tr>
+							<td style="padding:8px 12px;font-weight:500;">{{ proc.process_name }}</td>
+							<td style="padding:8px 12px;">{{ proc.contractor or '—' }}</td>
+							<td style="padding:8px 12px;">{{ proc.date_sent or '—' }}</td>
+							<td style="padding:8px 12px;">{{ proc.expected_return_date or '—' }}</td>
+							<td style="padding:8px 12px;">
+								{% if proc.status == 'Completed' %}
+									<span style="background:#e8f5e9;color:#2e7d32;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:500;">✅ {{ proc.status }}</span>
+								{% elif proc.status == 'Processing' %}
+									<span style="background:#fff3e0;color:#e65100;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:500;">🔄 {{ proc.status }}</span>
+								{% else %}
+									<span style="background:#f5f5f5;color:#888;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:500;">⏸️ {{ proc.status }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		{% endif %}
+
 		<!-- Process History Timeline -->
 		<div class="dpp-section-title">⚙️ Manufacturing Timeline</div>
 		{% if process_history %}

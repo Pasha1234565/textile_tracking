@@ -285,28 +285,57 @@ def _create_demo_jwo_sql():
 		jwo_name = f"JWO-DEMO-{idx:04d}"
 		frappe.db.sql("""
 			INSERT INTO `tabJob Work Order`
-				(name, naming_series, contractor, source_item, qty_sent,
-				 subcontract_process, rate_per_piece, date_sent,
-				 expected_return_date, status,
+				(name, naming_series, garment_type, source_item, qty_sent,
+				 status,
 				 creation, modified, modified_by, owner, docstatus, idx)
 			VALUES
-				(%(name)s, 'JWO-DEMO-', %(contractor)s, %(item)s, %(qty)s,
-				 %(process)s, %(rate)s, %(sent)s,
-				 %(expected)s, %(status)s,
+				(%(name)s, 'JWO-DEMO-', %(garment_type)s, %(item)s, %(qty)s,
+				 %(status)s,
 				 %(now)s, %(now)s, 'Administrator', 'Administrator', 0, 0)
 		""", {
 			"name": jwo_name,
-			"contractor": contractor,
+			"garment_type": "Shirt",
 			"item": item,
 			"qty": qty,
-			"process": process,
-			"rate": rate,
-			"sent": sent,
-			"expected": expected,
 			"status": status,
 			"now": now,
 		})
-		print(f"  ✅ Created Job Work Order: {jwo_name} ({contractor})")
+
+		# Also add process rows for each JWO
+		processes = ["Cutting", "Stitching", "Finishing"]
+		if idx == 3:  # Dyeing JWO
+			processes = ["Cutting", "Stitching", "Dyeing", "Finishing"]
+		elif idx == 4:  # Embroidery JWO
+			processes = ["Cutting", "Stitching", "Embroidery", "Finishing"]
+		elif idx == 5:  # Finishing JWO
+			processes = ["Cutting", "Stitching", "Dyeing", "Finishing"]
+
+		for p_idx, process_name in enumerate(processes, 1):
+			frappe.db.sql("""
+				INSERT INTO `tabJob Work Order Process`
+					(name, parent, parenttype, parentfield, idx,
+					 process_name, contractor, date_sent,
+					 expected_return_date, status, qty_sent,
+					 creation, modified, modified_by, owner, docstatus)
+				VALUES
+					(%(name)s, %(parent)s, 'Job Work Order', 'processes', %(idx)s,
+					 %(process)s, %(contractor)s, %(sent)s,
+					 %(expected)s, %(p_status)s, %(qty)s,
+					 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
+			""", {
+				"name": frappe.generate_hash("", 10),
+				"parent": jwo_name,
+				"idx": p_idx,
+				"process": process_name,
+				"contractor": contractor,
+				"sent": sent,
+				"expected": expected,
+				"qty": qty,
+				"p_status": "Not Started" if status == "Draft" else "Processing",
+				"now": now,
+			})
+
+		print(f"  ✅ Created Job Work Order: {jwo_name} ({contractor}) - {len(processes)} processes")
 
 
 def _create_demo_fwl_sql():

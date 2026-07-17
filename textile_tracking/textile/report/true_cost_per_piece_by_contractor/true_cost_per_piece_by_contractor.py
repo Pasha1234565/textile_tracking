@@ -15,7 +15,7 @@ def execute(filters=None):
 def get_columns():
 	return [
 		{"label": _("Job Contractor"), "fieldname": "contractor", "fieldtype": "Link", "options": "Job Contractor", "width": 180},
-		{"label": _("Subcontract Process"), "fieldname": "subcontract_process", "fieldtype": "Data", "width": 150},
+		{"label": _("Process"), "fieldname": "process_name", "fieldtype": "Data", "width": 150},
 		{"label": _("Total Qty Sent"), "fieldname": "total_qty_sent", "fieldtype": "Float", "width": 120},
 		{"label": _("Total Qty Received"), "fieldname": "total_qty_received", "fieldtype": "Float", "width": 130},
 		{"label": _("Total Wastage Qty"), "fieldname": "total_wastage_qty", "fieldtype": "Float", "width": 130},
@@ -32,15 +32,19 @@ def get_data(filters):
 	params = {}
 
 	if filters.get("contractor"):
-		conditions.append("jwo.contractor = %(contractor)s")
+		conditions.append("jwp.contractor = %(contractor)s")
 		params["contractor"] = filters["contractor"]
 
+	if filters.get("process_name"):
+		conditions.append("jwp.process_name = %(process_name)s")
+		params["process_name"] = filters["process_name"]
+
 	if filters.get("from_date"):
-		conditions.append("jwo.date_sent >= %(from_date)s")
+		conditions.append("jwp.date_sent >= %(from_date)s")
 		params["from_date"] = filters["from_date"]
 
 	if filters.get("to_date"):
-		conditions.append("jwo.date_sent <= %(to_date)s")
+		conditions.append("jwp.date_sent <= %(to_date)s")
 		params["to_date"] = filters["to_date"]
 
 	where_clause = " AND ".join(conditions) if conditions else "1=1"
@@ -48,18 +52,18 @@ def get_data(filters):
 	# Get rate card rate for each contractor+process
 	raw_data = frappe.db.sql(f"""
 		SELECT
-			jwo.contractor,
-			jwo.subcontract_process,
-			SUM(jwo.qty_sent) as total_qty_sent,
+			jwp.contractor,
+			jwp.process_name,
+			SUM(jwp.qty_sent) as total_qty_sent,
 			COALESCE(SUM(jwr.qty_received), 0) as total_qty_received,
 			COALESCE(SUM(jwr.wastage_qty), 0) as total_wastage_qty,
-			COALESCE(cri.rate_per_piece, 0) as rate_per_piece
-		FROM `tabJob Work Order` jwo
+			AVG(jwp.rate_per_piece) as rate_per_piece
+		FROM `tabJob Work Order Process` jwp
+		INNER JOIN `tabJob Work Order` jwo ON jwo.name = jwp.parent AND jwp.parenttype = 'Job Work Order'
 		LEFT JOIN `tabJob Work Return` jwr ON jwr.parent = jwo.name AND jwr.parenttype = 'Job Work Order'
-		LEFT JOIN `tabContractor Rate Item` cri ON cri.parent = jwo.contractor AND cri.parenttype = 'Contractor' AND cri.subcontract_process = jwo.subcontract_process
 		WHERE {where_clause}
-		GROUP BY jwo.contractor, jwo.subcontract_process
-		ORDER BY jwo.contractor
+		GROUP BY jwp.contractor, jwp.process_name
+		ORDER BY jwp.contractor, jwp.process_name
 	""", params, as_dict=True)
 
 	# Get raw material cost from item valuation
@@ -71,10 +75,14 @@ def get_data(filters):
 		if row.total_qty_sent > 0:
 			wastage_pct = round((wastage_qty / row.total_qty_sent) * 100, 2)
 
-		# Estimate wastage cost using avg raw material rate
+		# Get source item from any JWO linked to this contractor+process
+		source_item = frappe.db.get_value(
+			"Job Work Order",
+			{"name": frappe.db.get_value("Job Work Order Process", {"contractor": row.contractor, "process_name": row.process_name}, "parent")},
+			"source_item"
+		)
 		avg_raw_material_rate = frappe.db.get_value(
-			"Item", {"name": frappe.db.get_value("Job Work Order", {"contractor": row.contractor}, "source_item")},
-			"valuation_rate"
+			"Item", {"name": source_item}, "valuation_rate"
 		) or 0
 
 		labor_cost = qty_received * row.rate_per_piece
@@ -84,7 +92,7 @@ def get_data(filters):
 
 		data.append({
 			"contractor": row.contractor,
-			"subcontract_process": row.subcontract_process,
+			"process_name": row.process_name,
 			"total_qty_sent": row.total_qty_sent,
 			"total_qty_received": qty_received,
 			"total_wastage_qty": wastage_qty,

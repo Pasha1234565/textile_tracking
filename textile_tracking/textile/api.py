@@ -4,19 +4,43 @@ import frappe
 from frappe.utils import nowdate
 
 
+def _get_first_process_contractor(job_work_order):
+	"""Helper: get the first process's contractor."""
+	processes = job_work_order.get("processes") or []
+	for p in processes:
+		if p.contractor:
+			return p.contractor
+	return None
+
+
+def _get_first_process_name(job_work_order):
+	"""Helper: get the first process name."""
+	processes = job_work_order.get("processes") or []
+	for p in processes:
+		return p.process_name
+	return ""
+
+
 def create_subcontract_transfer(job_work_order):
 	"""Create Stock Entry: Material Transfer to Subcontractor.
 
 	Triggered on submit of Job Work Order.
-	Transfers raw material (source_item) from company warehouse to contractor.
+	Transfers raw material (source_item) from company warehouse to the
+	first process's contractor.
 	"""
+	contractor = _get_first_process_contractor(job_work_order)
+	process_name = _get_first_process_name(job_work_order)
+
+	if not contractor:
+		return None
+
 	try:
 		stock_entry = frappe.new_doc("Stock Entry")
 		stock_entry.stock_entry_type = "Material Transfer"
 		stock_entry.posting_date = nowdate()
 		stock_entry.remarks = frappe._(
 			"Job Work Transfer: {0} to {1} for process {2}"
-		).format(job_work_order.name, job_work_order.contractor, job_work_order.subcontract_process)
+		).format(job_work_order.name, contractor, process_name)
 
 		# Default source warehouse — uses the company's default warehouse
 		source_warehouse = frappe.db.get_single_value(
@@ -64,6 +88,8 @@ def create_receipt_entry(job_work_order):
 	if hasattr(job_work_order, "stock_entry_received") and job_work_order.stock_entry_received:
 		return
 
+	contractor = _get_first_process_contractor(job_work_order)
+
 	try:
 		total_received = sum(
 			r.qty_received for r in job_work_order.job_work_returns if r.qty_received
@@ -83,7 +109,7 @@ def create_receipt_entry(job_work_order):
 		stock_entry.remarks = frappe._(
 			"Job Work Receipt: {0} from {1}, qty received: {2}"
 		).format(
-			job_work_order.name, job_work_order.contractor, total_received
+			job_work_order.name, contractor or "Contractor", total_received
 		)
 
 		stock_entry.append("items", {
