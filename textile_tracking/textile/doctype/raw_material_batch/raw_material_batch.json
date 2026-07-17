@@ -135,6 +135,30 @@
    "in_list_view": 1
   },
   {
+   "fieldname": "storage_section",
+   "fieldtype": "Section Break",
+   "label": "Storage Location"
+  },
+  {
+   "fieldname": "storage_location",
+   "fieldtype": "Data",
+   "label": "Storage ID / Location",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "description": "Designated storage area identifier for this batch (e.g., Aisle-B-Rack-3, Warehouse-1, Rack-07)"
+  },
+  {
+   "fieldname": "column_break_storage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "storage_notes",
+   "fieldtype": "Small Text",
+   "label": "Storage Notes",
+   "description": "Handling instructions, temperature requirements, or special storage conditions"
+  },
+  {
    "fieldname": "section_break_notes",
    "fieldtype": "Section Break",
    "label": "Additional Information"
