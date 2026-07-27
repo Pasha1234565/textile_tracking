@@ -231,48 +231,35 @@ class JobWorkOrder(Document):
 				self.status = "Received"
 
 	def auto_create_fabric_wastage_logs_from_returns(self):
-		"""Update the existing FWL with cumulative wastage = qty_sent - total_received.
+		"""Update the existing FWL so it auto-calculates wastage from linked JWO.
 
-		This runs on every update after submit. Instead of creating one FWL
-		per return row (which would have incorrect per-row calculations),
-		we update the single initial FWL with the cumulative wastage from
-		ALL returns. Also resets to 0 if all material was received back.
+		The Fabric Wastage Log's validate() now auto-calculates wastage
+		from the linked JWO's returns (qty_sent - total_qty_received).
+		We just need to find and save the FWL to trigger its validate.
 		"""
 		if not self.get("job_work_returns"):
 			return
 
-		total_received = sum(flt(r.qty_received) for r in self.job_work_returns if r.qty_received)
-		cumulative_wastage = max(flt(self.qty_sent) - total_received, 0)
-
-		# Find the existing FWL for this JWO (created by create_initial_fabric_wastage_log)
-		existing_fwl = frappe.db.get_value(
-			"Fabric Wastage Log",
-			{"job_work_order": self.name},
-			["name", "contractor"],
-			order_by="creation asc",
-			as_dict=True,
-		)
-
-		if existing_fwl:
-			remarks = frappe._(
-				"Auto-calculated: {0} sent - {1} received = {2} wasted"
-			).format(self.qty_sent, total_received, cumulative_wastage)
-
-			# Only update if wastage_qty actually changed (avoid unnecessary DB writes)
-			try:
-				fwl_doc = frappe.get_doc("Fabric Wastage Log", existing_fwl.name)
-				if fwl_doc.wastage_qty != cumulative_wastage:
-					fwl_doc.wastage_qty = cumulative_wastage
-					fwl_doc.qty_sent = self.qty_sent
-					fwl_doc.remarks = remarks
-					fwl_doc.flags.ignore_permissions = True
-					fwl_doc.save()
-					# save() triggers on_update() which updates contractor wastage stats
-			except Exception:
-				frappe.log_error(
-					frappe.get_traceback(),
-					frappe._("Failed to update FWL for JWO: {0}").format(self.name),
-				)
+		try:
+			existing_fwl_name = frappe.db.get_value(
+				"Fabric Wastage Log",
+				{"job_work_order": self.name},
+				"name",
+			)
+			if existing_fwl_name:
+				fwl_doc = frappe.get_doc("Fabric Wastage Log", existing_fwl_name)
+				# Update qty_sent in case it changed on the JWO
+				fwl_doc.qty_sent = self.qty_sent
+				fwl_doc.flags.ignore_permissions = True
+				fwl_doc.save()
+				# save() triggers validate() → _auto_calculate_wastage_from_jwo()
+				# which sets wastage_qty = qty_sent - total_qty_received
+				# Then on_update() updates contractor wastage stats
+		except Exception:
+			frappe.log_error(
+				frappe.get_traceback(),
+				frappe._("Failed to update FWL for JWO: {0}").format(self.name),
+			)
 
 	def get_first_processing_contractor(self):
 		"""Get the first process that is marked as 'Processing' or 'Completed'."""

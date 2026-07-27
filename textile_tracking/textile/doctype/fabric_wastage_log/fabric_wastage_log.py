@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt
 
 
 class FabricWastageLog(Document):
 	def validate(self):
+		"""Auto-calculate wastage from linked JWO when available."""
+		self._auto_calculate_wastage_from_jwo()
 		self.calculate_wastage_pct()
 
 	def on_update(self):
@@ -14,8 +17,28 @@ class FabricWastageLog(Document):
 	def on_trash(self):
 		update_contractor_wastage_stats(self.contractor)
 
+	def _auto_calculate_wastage_from_jwo(self):
+		"""Calculate wastage_qty = qty_sent - total_qty_received from linked JWO."""
+		if not self.job_work_order:
+			return
+
+		# Fetch all returns for this JWO
+		returns = frappe.get_all(
+			"Job Work Return",
+			filters={"parent": self.job_work_order, "parenttype": "Job Work Order"},
+			fields=["qty_received"],
+		)
+
+		total_received = sum(flt(r.qty_received) for r in returns)
+		calculated_wastage = max(flt(self.qty_sent) - total_received, 0)
+
+		self.wastage_qty = calculated_wastage
+		self.remarks = frappe._(
+			"Auto-calculated: {0} sent - {1} received = {2} wasted"
+		).format(self.qty_sent, total_received, calculated_wastage)
+
 	def calculate_wastage_pct(self):
-		"""Compute wastage percentage."""
+		"""Compute wastage percentage: (wastage_qty / qty_sent) × 100."""
 		if self.qty_sent and self.qty_sent > 0:
 			self.wastage_pct = round((self.wastage_qty / self.qty_sent) * 100, 2)
 		else:
