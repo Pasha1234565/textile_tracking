@@ -11,20 +11,29 @@ frappe.ui.form.on('Job Work Order', {
 	refresh: function(frm) {
 		if (frm.doc.__islocal) return;
 
-		// Force reload process data from server to ensure grid populates
-		frappe.call({
-			method: 'frappe.client.get',
-			args: {
-				doctype: 'Job Work Order',
-				name: frm.doc.name
-			},
-			callback: function(r) {
-				if (r.message && r.message.processes) {
-					// Clear and re-set the processes table with server data
-					var processes = r.message.processes || [];
-					if (processes.length > 0) {
+		// If processes are already loaded (length > 0 or has rows), just number them
+		var hasProcesses = frm.doc.processes && frm.doc.processes.length > 0;
+		var hasReturns = frm.doc.job_work_returns && frm.doc.job_work_returns.length > 0;
+
+		if (hasProcesses) {
+			refresh_process_numbers(frm);
+		}
+
+		// Only force-load from server if grid is empty (fallback for permission issues)
+		if (!hasProcesses || !hasReturns) {
+			frappe.call({
+				method: 'frappe.client.get',
+				args: {
+					doctype: 'Job Work Order',
+					name: frm.doc.name
+				},
+				callback: function(r) {
+					if (!r.message) return;
+
+					// Load processes if empty
+					if (!hasProcesses && r.message.processes && r.message.processes.length > 0) {
 						frm.clear_table('processes');
-						$.each(processes, function(i, row) {
+						$.each(r.message.processes, function(i, row) {
 							var child = frm.add_child('processes');
 							child.process_no = row.process_no || (i + 1);
 							child.process_name = row.process_name || '';
@@ -40,23 +49,11 @@ frappe.ui.form.on('Job Work Order', {
 						refresh_field('processes');
 						refresh_process_numbers(frm);
 					}
-				}
-			}
-		});
 
-		// Also reload returns data
-		frappe.call({
-			method: 'frappe.client.get',
-			args: {
-				doctype: 'Job Work Order',
-				name: frm.doc.name
-			},
-			callback: function(r) {
-				if (r.message && r.message.job_work_returns) {
-					var returns = r.message.job_work_returns || [];
-					if (returns.length > 0) {
+					// Load returns if empty
+					if (!hasReturns && r.message.job_work_returns && r.message.job_work_returns.length > 0) {
 						frm.clear_table('job_work_returns');
-						$.each(returns, function(i, row) {
+						$.each(r.message.job_work_returns, function(i, row) {
 							var child = frm.add_child('job_work_returns');
 							child.date_received = row.date_received || '';
 							child.qty_received = row.qty_received || 0;
@@ -67,8 +64,8 @@ frappe.ui.form.on('Job Work Order', {
 						refresh_field('job_work_returns');
 					}
 				}
-			}
-		});
+			});
+		}
 	},
 
 	garment_type: function(frm) {
