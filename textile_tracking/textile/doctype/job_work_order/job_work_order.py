@@ -19,7 +19,6 @@ GARMENT_PROCESS_MAP = {
 	"Fabrics (Roll)": ["Dyeing", "Finishing"],
 }
 
-
 class JobWorkOrder(Document):
 	def onload(self):
 		"""Ensure child table data is always loaded on document fetch.
@@ -27,16 +26,12 @@ class JobWorkOrder(Document):
 		This runs EVERY time the document is loaded from the database.
 		We directly reload child table data and set it on the document
 		to ensure it's included in the serialized response sent to the client.
-
-		Without this, Frappe's ORM sometimes fails to include child table
-		data in the response for workflow-enabled documents, especially
-		on subsequent page loads (caching issue).
 		"""
 		if self.get("__islocal"):
 			return
 
 		try:
-			# Reload processes from database using get_all (bypasses ORM cache)
+			# Reload processes from database
 			processes = frappe.db.get_all(
 				"Job Work Order Process",
 				filters={"parent": self.name, "parenttype": "Job Work Order"},
@@ -52,19 +47,12 @@ class JobWorkOrder(Document):
 				order_by="idx asc",
 			)
 
-			# KEY FIX: Set data directly on the document's child table fields.
-			# This ensures the data is included in the serialized response
-			# as frm.doc.processes (not just frm.__onload).
-			#
-			# Using self.set() goes through Frappe's ORM which properly
-			# converts dicts to Document objects.
 			if processes:
 				self.set("processes", processes)
 			if returns:
 				self.set("job_work_returns", returns)
 
 		except Exception:
-			# Don't crash document load if child data fetch fails
 			frappe.log_error(
 				frappe.get_traceback(),
 				frappe._("Failed to reload child data on JWO load: {0}").format(self.name),
@@ -76,15 +64,11 @@ class JobWorkOrder(Document):
 		self.assign_process_numbers()
 		self.update_status_based_on_returns()
 
-		# ── TRACE: Log incoming child data for diagnostics ──
-		if frappe.flags.in_test:
-			return
-		p_count = len(self.get("processes") or [])
-		r_count = len(self.get("job_work_returns") or [])
-		frappe.log_error(
-			f"JWO {self.name} validate() — processes: {p_count}, returns: {r_count}, docstatus: {self.docstatus}",
-			"JWO Save Trace"
-		)
+		# ── CRITICAL FIX: Explicitly set parent/parenttype/parentfield on all child rows ──
+		# This ensures child table rows are saved with correct parent references.
+		# Frappe's ORM sometimes fails to set these columns for unknown reasons
+		# (schema caching issues, timing with before_request hooks, etc.)
+		self._ensure_child_parent_columns()
 
 	def on_submit(self):
 		self.create_stock_transfer_on_send()
@@ -95,18 +79,31 @@ class JobWorkOrder(Document):
 		self.auto_create_fabric_wastage_logs_from_returns()
 		self.reconcile_returns()
 
-	def create_initial_fabric_wastage_log(self):
-		"""Create an initial placeholder Fabric Wastage Log on JWO submission.
+	def _ensure_child_parent_columns(self):
+		"""Explicitly set parent, parenttype, and parentfield on all child table rows.
 
-		This ensures every submitted JWO has at least one FWL entry.
-		When returns with wastage are later recorded, additional FWLs
-		are created by auto_create_fabric_wastage_logs_from_returns().
+		This ensures Frappe's ORM can properly persist child rows with correct
+		parent references. Without this, the ORM may insert rows with NULL parent
+		columns, making them invisible when loading the parent document later.
+
+		Uses self.meta.get_table_fields() dynamically so any new Table fields
+		added to the DocType JSON in the future are automatically covered.
 		"""
-		# Skip if FWL already exists for this JWO
+		if not self.name:
+			return
+
+		for table_field in self.meta.get_table_fields():
+			rows = self.get(table_field.fieldname) or []
+			for row in rows:
+				row.parent = self.name
+				row.parenttype = self.doctype
+				row.parentfield = table_field.fieldname
+
+	def create_initial_fabric_wastage_log(self):
+		"""Create an initial placeholder Fabric Wastage Log on JWO submission."""
 		if frappe.db.exists("Fabric Wastage Log", {"job_work_order": self.name}):
 			return
 
-		# Get first process's contractor
 		contractor = None
 		for p in self.get("processes") or []:
 			if p.contractor:
@@ -139,12 +136,10 @@ class JobWorkOrder(Document):
 		if not self.garment_type:
 			return
 
-		# Only auto-populate if the table is empty or garment type changed
 		existing_processes = [p.process_name for p in self.get("processes") or []]
 		expected_processes = GARMENT_PROCESS_MAP.get(self.garment_type, [])
 
 		if not existing_processes:
-			# Fresh auto-populate
 			self.set("processes", [])
 			for idx, process_name in enumerate(expected_processes, 1):
 				row = self.append("processes", {})
@@ -159,13 +154,7 @@ class JobWorkOrder(Document):
 			p.process_no = idx
 
 	def validate_processes_required(self):
-		"""Validate that at least one process row exists.
-
-		This runs AFTER auto_populate_processes() so auto-populated rows
-		will have already been added. We use this instead of reqd=1 on the
-		JSON field because Frappe's client-side reqd validation on Table
-		fields can be unreliable.
-		"""
+		"""Validate that at least one process row exists."""
 		if not self.get("processes") or len(self.get("processes")) == 0:
 			frappe.throw(
 				frappe._("At least one process is required. Please select a Garment Type to auto-populate processes or add them manually."),
@@ -186,12 +175,7 @@ class JobWorkOrder(Document):
 				self.status = "Received"
 
 	def auto_create_fabric_wastage_logs_from_returns(self):
-		"""Auto-create Fabric Wastage Log entries for any returns with wastage.
-
-		This runs on every update after submit so that FWLs are always
-		in sync with the returns data. Users no longer need to manually
-		create Fabric Wastage Log entries.
-		"""
+		"""Auto-create Fabric Wastage Log entries for any returns with wastage."""
 		if not self.get("job_work_returns"):
 			return
 
@@ -199,7 +183,6 @@ class JobWorkOrder(Document):
 			if not return_row.wastage_qty or return_row.wastage_qty <= 0:
 				continue
 
-			# Check if FWL already exists for this return row (match by qty+date to avoid duplicates)
 			existing = frappe.db.exists("Fabric Wastage Log", {
 				"job_work_order": self.name,
 				"wastage_qty": return_row.wastage_qty,
@@ -208,7 +191,6 @@ class JobWorkOrder(Document):
 			if existing:
 				continue
 
-			# Get first process's contractor for the FWL
 			contractor = None
 			for p in self.get("processes") or []:
 				if p.contractor:
@@ -238,7 +220,6 @@ class JobWorkOrder(Document):
 		for p in self.get("processes") or []:
 			if p.contractor and p.status in ("Processing", "Completed"):
 				return p.contractor
-		# Fallback: first process with a contractor
 		for p in self.get("processes") or []:
 			if p.contractor:
 				return p.contractor
@@ -259,21 +240,15 @@ class JobWorkOrder(Document):
 		return ", ".join(contractors)
 
 	def create_stock_transfer_on_send(self):
-		"""Create Stock Entry for material transfer to subcontractor.
-
-		Uses the first process's contractor for the transfer.
-		"""
+		"""Create Stock Entry for material transfer to subcontractor."""
 		try:
-			# Check if column/table exists before accessing to avoid errors
 			if not frappe.db.has_column("Stock Settings", "allow_material_transfer_to_subcontractor"):
 				return
 
 			if frappe.db.get_single_value("Stock Settings", "allow_material_transfer_to_subcontractor"):
 				from textile_tracking.textile.api import create_subcontract_transfer
-
 				create_subcontract_transfer(self)
 		except Exception:
-			# Table or column may not exist in this ERPNext version — skip silently
 			pass
 
 	def reconcile_returns(self):
@@ -281,11 +256,6 @@ class JobWorkOrder(Document):
 		try:
 			if self.status in ("Received", "Partially Received"):
 				from textile_tracking.textile.api import create_receipt_entry
-
 				create_receipt_entry(self)
 		except Exception:
-			# Stock module may not be available in this ERPNext setup — skip silently
 			pass
-
-
-

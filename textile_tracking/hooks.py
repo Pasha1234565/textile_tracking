@@ -65,9 +65,11 @@ after_migrate = [
 
 # Run on first HTTP request to fix child table parent columns
 # ------------------------------
-# before_request is the most reliable hook because frappe.db is always connected
-# during HTTP requests. The cache flag prevents re-running on every request.
-before_request = ["textile_tracking.patches.fix_child_table_parent_columns.try_fix_once"]
+# DISABLED: The before_request hook was causing schema cache issues where
+# Frappe's ORM would insert child rows without parent/parenttype/parentfield
+# columns. The fix is now handled directly in _ensure_child_parent_columns()
+# inside the JWO's validate() and on_submit() methods.
+# before_request = ["textile_tracking.patches.fix_child_table_parent_columns.try_fix_once"]
 
 # Boot
 # ------------------------------
