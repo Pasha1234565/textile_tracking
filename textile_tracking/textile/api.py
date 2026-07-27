@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import frappe
-from frappe.utils import nowdate, today
+from frappe.utils import nowdate
 
 
 def ensure_child_data_on_load(doc, method):
