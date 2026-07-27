@@ -236,35 +236,38 @@ class JobWorkOrder(Document):
 		This runs on every update after submit. Instead of creating one FWL
 		per return row (which would have incorrect per-row calculations),
 		we update the single initial FWL with the cumulative wastage from
-		ALL returns.
+		ALL returns. Also resets to 0 if all material was received back.
 		"""
 		if not self.get("job_work_returns"):
 			return
 
 		total_received = sum(flt(r.qty_received) for r in self.job_work_returns if r.qty_received)
-		cumulative_wastage = flt(self.qty_sent) - total_received
-
-		if cumulative_wastage <= 0:
-			return
+		cumulative_wastage = max(flt(self.qty_sent) - total_received, 0)
 
 		# Find the existing FWL for this JWO (created by create_initial_fabric_wastage_log)
-		existing_fwl_name = frappe.db.get_value(
+		existing_fwl = frappe.db.get_value(
 			"Fabric Wastage Log",
 			{"job_work_order": self.name},
-			"name",
+			["name", "contractor"],
 			order_by="creation asc",
+			as_dict=True,
 		)
 
-		if existing_fwl_name:
-			# Update the existing FWL with cumulative wastage
+		if existing_fwl:
+			remarks = frappe._(
+				"Auto-calculated: {0} sent - {1} received = {2} wasted"
+			).format(self.qty_sent, total_received, cumulative_wastage)
+
+			# Only update if wastage_qty actually changed (avoid unnecessary DB writes)
 			try:
-				frappe.db.set_value("Fabric Wastage Log", existing_fwl_name, {
-					"wastage_qty": cumulative_wastage,
-					"remarks": frappe._(
-						"Auto-calculated: {0} sent - {1} received = {2} wasted"
-					).format(self.qty_sent, total_received, cumulative_wastage),
-					"qty_sent": self.qty_sent,
-				})
+				fwl_doc = frappe.get_doc("Fabric Wastage Log", existing_fwl.name)
+				if fwl_doc.wastage_qty != cumulative_wastage:
+					fwl_doc.wastage_qty = cumulative_wastage
+					fwl_doc.qty_sent = self.qty_sent
+					fwl_doc.remarks = remarks
+					fwl_doc.flags.ignore_permissions = True
+					fwl_doc.save()
+					# save() triggers on_update() which updates contractor wastage stats
 			except Exception:
 				frappe.log_error(
 					frappe.get_traceback(),
