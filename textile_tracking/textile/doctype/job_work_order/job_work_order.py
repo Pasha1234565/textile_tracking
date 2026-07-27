@@ -22,32 +22,53 @@ GARMENT_PROCESS_MAP = {
 
 class JobWorkOrder(Document):
 	def onload(self):
-		"""Ensure child table data is available to the client via __onload.
+		"""Ensure child table data is always loaded on document fetch.
 
-		This runs on every document load (initial load, page refresh, navigation back).
-		We embed the child table data directly so the client doesn't need to
-		make a separate API call to fetch it.
+		This runs EVERY time the document is loaded from the database.
+		We directly reload child table data and set it on the document
+		to ensure it's included in the serialized response sent to the client.
+
+		Without this, Frappe's ORM sometimes fails to include child table
+		data in the response for workflow-enabled documents, especially
+		on subsequent page loads (caching issue).
 		"""
 		if self.get("__islocal"):
 			return
 
-		# Fetch processes and returns from the database and make them available
-		# to the client via frm.__onload
-		processes = frappe.get_all(
-			"Job Work Order Process",
-			filters={"parent": self.name, "parenttype": "Job Work Order"},
-			fields=["*"],
-			order_by="idx asc",
-		)
-		returns = frappe.get_all(
-			"Job Work Return",
-			filters={"parent": self.name, "parenttype": "Job Work Order"},
-			fields=["*"],
-			order_by="idx asc",
-		)
+		try:
+			# Reload processes from database using get_all (bypasses ORM cache)
+			processes = frappe.db.get_all(
+				"Job Work Order Process",
+				filters={"parent": self.name, "parenttype": "Job Work Order"},
+				fields=["*"],
+				order_by="idx asc",
+			)
 
-		self.set_onload("jwo_processes", processes)
-		self.set_onload("jwo_returns", returns)
+			# Reload returns from database
+			returns = frappe.db.get_all(
+				"Job Work Return",
+				filters={"parent": self.name, "parenttype": "Job Work Order"},
+				fields=["*"],
+				order_by="idx asc",
+			)
+
+			# KEY FIX: Set data directly on the document's child table fields.
+			# This ensures the data is included in the serialized response
+			# as frm.doc.processes (not just frm.__onload).
+			#
+			# Using self.set() goes through Frappe's ORM which properly
+			# converts dicts to Document objects.
+			if processes:
+				self.set("processes", processes)
+			if returns:
+				self.set("job_work_returns", returns)
+
+		except Exception:
+			# Don't crash document load if child data fetch fails
+			frappe.log_error(
+				frappe.get_traceback(),
+				frappe._("Failed to reload child data on JWO load: {0}").format(self.name),
+			)
 
 	def validate(self):
 		self.auto_populate_processes()

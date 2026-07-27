@@ -88,45 +88,13 @@ frappe.ui.form.on('Job Work Order Process', {
  * Priority: 1) frm.doc (already loaded), 2) frm.__onload (server-side), 3) API call
  */
 function populate_child_tables(frm) {
-	// Strategy 1: Data already on the document (e.g., during creation/editing)
+	// Strategy 1: Data already on the document (from server-side onload())
 	if (frm.doc.processes && frm.doc.processes.length > 0) {
 		refresh_process_numbers(frm);
 		return;
 	}
 
-	// Strategy 2: Data from __onload (set by Python onload() via set_onload)
-	var processes = frm.__onload && frm.__onload.jwo_processes;
-	var returns = frm.__onload && frm.__onload.jwo_returns;
-
-	if (processes && processes.length > 0) {
-		fill_child_grid(frm, 'processes', 'Job Work Order Process', processes, function(child, row, i) {
-			child.process_no = row.process_no || row.idx || (i + 1);
-			child.process_name = row.process_name || '';
-			child.contractor = row.contractor || '';
-			child.date_sent = row.date_sent || '';
-			child.expected_return_date = row.expected_return_date || '';
-			child.actual_return_date = row.actual_return_date || '';
-			child.status = row.status || 'Not Started';
-			child.qty_sent = row.qty_sent || 0;
-			child.rate_per_piece = row.rate_per_piece || 0;
-			child.notes = row.notes || '';
-		});
-		refresh_process_numbers(frm);
-		return;
-	}
-
-	// Also populate returns if available
-	if (returns && returns.length > 0) {
-		fill_child_grid(frm, 'job_work_returns', 'Job Work Return', returns, function(child, row) {
-			child.date_received = row.date_received || '';
-			child.qty_received = row.qty_received || 0;
-			child.qty_rejected = row.qty_rejected || 0;
-			child.wastage_qty = row.wastage_qty || 0;
-			child.wastage_reason = row.wastage_reason || '';
-		});
-	}
-
-	// Strategy 3: Fetch from server via API
+	// Strategy 2: Fetch from server via API
 	if (!frm._api_called) {
 		frm._api_called = true;
 		fetch_child_data(frm);
