@@ -30,7 +30,7 @@ doctype_class = {}
 # ------------------------------
 doc_events = {
 	"Job Work Order": {
-		"after_load": "textile_tracking.textile.api.ensure_child_data_on_load",
+		"onload": "textile_tracking.textile.api.ensure_child_data_on_load",
 	}
 }
 

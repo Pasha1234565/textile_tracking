@@ -50,7 +50,20 @@
    "columns": 2
   }
  ],
- "permissions": [],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1
+  },
+  {
+   "role": "Job Work Manager",
+   "read": 1
+  },
+  {
+   "role": "Contractor Coordinator",
+   "read": 1
+  }
+ ],
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1

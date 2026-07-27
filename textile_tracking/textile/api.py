@@ -4,6 +4,24 @@ import frappe
 from frappe.utils import nowdate
 
 
+@frappe.whitelist()
+def get_process_data(docname):
+	"""Fetch Job Work Order child table data for reliable client-side display."""
+	processes = frappe.get_all(
+		"Job Work Order Process",
+		filters={"parent": docname, "parenttype": "Job Work Order"},
+		fields=["*"],
+		order_by="idx asc",
+	)
+	returns = frappe.get_all(
+		"Job Work Return",
+		filters={"parent": docname, "parenttype": "Job Work Order"},
+		fields=["*"],
+		order_by="idx asc",
+	)
+	return {"processes": processes, "job_work_returns": returns}
+
+
 def ensure_child_data_on_load(doc, method):
 	"""Ensure child table data is always loaded when a Job Work Order is fetched.
 
