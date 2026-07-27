@@ -231,54 +231,44 @@ class JobWorkOrder(Document):
 				self.status = "Received"
 
 	def auto_create_fabric_wastage_logs_from_returns(self):
-		"""Auto-create Fabric Wastage Log entries for returns.
+		"""Update the existing FWL with cumulative wastage = qty_sent - total_received.
 
-		Wastage is calculated as: qty_sent - qty_received (per return row),
-		NOT from the manually entered wastage_qty field.
+		This runs on every update after submit. Instead of creating one FWL
+		per return row (which would have incorrect per-row calculations),
+		we update the single initial FWL with the cumulative wastage from
+		ALL returns.
 		"""
 		if not self.get("job_work_returns"):
 			return
 
-		for return_row in self.get("job_work_returns"):
-			# Calculate wastage from qty_sent and qty_received
-			calculated_wastage = flt(self.qty_sent) - flt(return_row.qty_received)
-			if calculated_wastage <= 0:
-				continue
+		total_received = sum(flt(r.qty_received) for r in self.job_work_returns if r.qty_received)
+		cumulative_wastage = flt(self.qty_sent) - total_received
 
-			# Avoid duplicates: use date_received + qty_received as unique key
-			existing = frappe.db.exists("Fabric Wastage Log", {
-				"job_work_order": self.name,
-				"date_logged": return_row.date_received or today(),
-				"wastage_qty": calculated_wastage,
-			})
-			if existing:
-				continue
+		if cumulative_wastage <= 0:
+			return
 
-			contractor = None
-			for p in self.get("processes") or []:
-				if p.contractor:
-					contractor = p.contractor
-					break
+		# Find the existing FWL for this JWO (created by create_initial_fabric_wastage_log)
+		existing_fwl_name = frappe.db.get_value(
+			"Fabric Wastage Log",
+			{"job_work_order": self.name},
+			"name",
+			order_by="creation asc",
+		)
 
+		if existing_fwl_name:
+			# Update the existing FWL with cumulative wastage
 			try:
-				fwl = frappe.new_doc("Fabric Wastage Log")
-				fwl.job_work_order = self.name
-				fwl.contractor = contractor
-				fwl.date_logged = return_row.date_received or today()
-				fwl.qty_sent = self.qty_sent
-				fwl.wastage_qty = calculated_wastage
-				fwl.wastage_category = "Contractor Damage"
-				fwl.remarks = (
-					f"Auto-calculated: {self.qty_sent} sent - {return_row.qty_received} received = {calculated_wastage} wasted. "
-					f"{return_row.wastage_reason or ''}"
-				)
-				fwl.raw_material_batch = self.raw_material_batch
-				fwl.flags.ignore_permissions = True
-				fwl.insert()
+				frappe.db.set_value("Fabric Wastage Log", existing_fwl_name, {
+					"wastage_qty": cumulative_wastage,
+					"remarks": frappe._(
+						"Auto-calculated: {0} sent - {1} received = {2} wasted"
+					).format(self.qty_sent, total_received, cumulative_wastage),
+					"qty_sent": self.qty_sent,
+				})
 			except Exception:
 				frappe.log_error(
 					frappe.get_traceback(),
-					frappe._("Auto-create Fabric Wastage Log failed for JWO: {0}").format(self.name),
+					frappe._("Failed to update FWL for JWO: {0}").format(self.name),
 				)
 
 	def get_first_processing_contractor(self):
