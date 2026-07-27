@@ -133,27 +133,28 @@ class JobWorkOrder(Document):
 			rows = self.get(table_field.fieldname) or []
 			child_table = frappe.unscrub(table_field.options)
 			for row in rows:
-				if row.name and (not row.parent or not row.parenttype):
-					try:
-						frappe.db.sql("""
-							UPDATE `tab{child_table}`
-							SET parent = %(parent)s,
-								parenttype = %(parenttype)s,
-								parentfield = %(parentfield)s
-							WHERE name = %(name)s
-						""".format(child_table=child_table), {
-							"parent": self.name,
-							"parenttype": self.doctype,
-							"parentfield": table_field.fieldname,
-							"name": row.name,
-						})
-						except Exception:
-							frappe.log_error(
-								frappe.get_traceback(),
-								frappe._("Failed to fix parent columns for {0} row {1}").format(
-									child_table, row.name
-								),
-							)
+				if not row.name:
+					continue
+				try:
+					frappe.db.sql("""
+						UPDATE `tab{child_table}`
+						SET parent = %(parent)s,
+							parenttype = %(parenttype)s,
+							parentfield = %(parentfield)s
+						WHERE name = %(name)s
+					""".format(child_table=child_table), {
+						"parent": self.name,
+						"parenttype": self.doctype,
+						"parentfield": table_field.fieldname,
+						"name": row.name,
+					})
+				except Exception:
+					frappe.log_error(
+						frappe.get_traceback(),
+						frappe._("Failed to fix parent columns for {0} row {1}").format(
+							child_table, row.name
+						),
+					)
 
 	def create_initial_fabric_wastage_log(self):
 		"""Create an initial placeholder Fabric Wastage Log on JWO submission."""
