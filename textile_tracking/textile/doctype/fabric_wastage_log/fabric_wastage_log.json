@@ -84,7 +84,7 @@
    "label": "Wastage %",
    "read_only": 1,
    "in_list_view": 1,
-   "description": "Computed: (Wastage Qty / Qty Sent) × 100"
+   "description": "Auto-calculated from linked JWO: (Qty Sent - Total Returned) / Qty Sent × 100"
   },
   {
    "fieldname": "wastage_category",
