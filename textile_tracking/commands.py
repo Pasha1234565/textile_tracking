@@ -361,7 +361,13 @@ def _create_demo_fwl_sql():
 	for idx, (jwo, qty_sent, waste_qty, category, remarks, date_logged) in enumerate(fwl_records, 1):
 		if not jwo:
 			continue
-		contractor = frappe.db.get_value("Job Work Order", jwo, "contractor")
+		# Get first process's contractor (JWO doesn't have a direct contractor field)
+		contractor = frappe.db.get_value(
+			"Job Work Order Process",
+			{"parent": jwo, "parenttype": "Job Work Order"},
+			"contractor",
+			order_by="idx asc",
+		)
 		waste_pct = round((waste_qty / qty_sent) * 100, 2) if qty_sent > 0 else 0
 		fwl_name = f"FWL-DEMO-{idx:04d}"
 

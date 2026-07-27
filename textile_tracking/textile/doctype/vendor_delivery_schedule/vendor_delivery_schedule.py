@@ -59,23 +59,39 @@ def _adjust_jwo_schedule(raw_material_batch, revised_date, original_date):
 			"raw_material_batch": raw_material_batch,
 			"status": ["in", ["Draft", "Sent"]],
 		},
-		fields=["name", "expected_return_date"],
+		pluck="name",
 	)
 
-	for jwo in affected_jwos:
-		if jwo.expected_return_date:
-			new_date = frappe.utils.add_days(jwo.expected_return_date, delay_days)
-			frappe.db.set_value("Job Work Order", jwo.name, "expected_return_date", new_date)
+	for jwo_name in affected_jwos:
+		# Update expected_return_date on all processes for this JWO
+		processes = frappe.db.get_all(
+			"Job Work Order Process",
+			filters={"parent": jwo_name, "parenttype": "Job Work Order"},
+			fields=["name", "expected_return_date"],
+		)
 
-			notification = frappe.new_doc("Notification Log")
-			notification.for_user = "Administrator"
-			notification.title = frappe._("Production Schedule Adjusted")
-			notification.subject = frappe._(
-				"JWO {0} shifted by {1} day(s) due to supplier delivery update. "
-				"New expected return: {2}"
-			).format(jwo.name, delay_days, new_date)
-			notification.document_type = "Job Work Order"
-			notification.document_name = jwo.name
-			notification.insert(ignore_permissions=True)
+		notified = False
+		for proc in processes:
+			if proc.expected_return_date:
+				new_date = frappe.utils.add_days(proc.expected_return_date, delay_days)
+				frappe.db.set_value(
+					"Job Work Order Process",
+					proc.name,
+					"expected_return_date",
+					new_date,
+				)
+
+				if not notified:
+					notification = frappe.new_doc("Notification Log")
+					notification.for_user = "Administrator"
+					notification.title = frappe._("Production Schedule Adjusted")
+					notification.subject = frappe._(
+						"JWO {0} shifted by {1} day(s) due to supplier delivery update. "
+						"New expected return: {2}"
+					).format(jwo_name, delay_days, new_date)
+					notification.document_type = "Job Work Order"
+					notification.document_name = jwo_name
+					notification.insert(ignore_permissions=True)
+					notified = True
 
 	frappe.db.commit()

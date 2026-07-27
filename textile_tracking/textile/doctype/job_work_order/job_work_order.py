@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils import today
 
 
 # Mapping: Garment Type -> List of processes (in order)
@@ -23,13 +24,15 @@ class JobWorkOrder(Document):
 	def validate(self):
 		self.auto_populate_processes()
 		self.validate_processes_required()
+		self.assign_process_numbers()
 		self.update_status_based_on_returns()
-		self.validate_close_conditions()
 
 	def on_submit(self):
 		self.create_stock_transfer_on_send()
+		self.assign_process_numbers()
 
 	def on_update_after_submit(self):
+		self.auto_create_fabric_wastage_logs()
 		self.reconcile_returns()
 
 	def auto_populate_processes(self):
@@ -44,11 +47,17 @@ class JobWorkOrder(Document):
 		if not existing_processes:
 			# Fresh auto-populate
 			self.set("processes", [])
-			for process_name in expected_processes:
+			for idx, process_name in enumerate(expected_processes, 1):
 				row = self.append("processes", {})
+				row.process_no = idx
 				row.process_name = process_name
 				row.status = "Not Started"
 				row.qty_sent = self.qty_sent
+
+	def assign_process_numbers(self):
+		"""Assign sequential process numbers to all process rows."""
+		for idx, p in enumerate(self.get("processes") or [], 1):
+			p.process_no = idx
 
 	def validate_processes_required(self):
 		"""Validate that at least one process row exists.
@@ -77,28 +86,52 @@ class JobWorkOrder(Document):
 			elif total_received >= total_sent:
 				self.status = "Received"
 
-	def validate_close_conditions(self):
-		"""Ensure Fabric Wastage Log exists if wastage > 0 before closing."""
-		# Only enforce on transition to Received/Closed, not on re-save
-		prev_doc = self.get_doc_before_save()
-		if prev_doc and prev_doc.status == self.status:
+	def auto_create_fabric_wastage_logs(self):
+		"""Auto-create Fabric Wastage Log entries for any returns with wastage.
+
+		This runs on every update after submit so that FWLs are always
+		in sync with the returns data. Users no longer need to manually
+		create Fabric Wastage Log entries.
+		"""
+		if not self.get("job_work_returns"):
 			return
 
-		total_wastage = sum(r.wastage_qty or 0 for r in self.get("job_work_returns") if r.wastage_qty)
+		for return_row in self.get("job_work_returns"):
+			if not return_row.wastage_qty or return_row.wastage_qty <= 0:
+				continue
 
-		# If there's wastage, check that a Fabric Wastage Log exists
-		if total_wastage > 0 and self.status in ("Received", "Closed"):
-			has_fwl = frappe.db.exists("Fabric Wastage Log", {
+			# Check if FWL already exists for this return row (match by qty+date to avoid duplicates)
+			existing = frappe.db.exists("Fabric Wastage Log", {
 				"job_work_order": self.name,
-				"wastage_qty": [">", 0],
+				"wastage_qty": return_row.wastage_qty,
+				"date_logged": return_row.date_received or today(),
 			})
-			if not has_fwl:
-				frappe.throw(
-					frappe._(
-						"There is wastage ({0}) recorded in the returns but no Fabric Wastage Log "
-						"is linked to this Job Work Order. Please create one before closing."
-					).format(total_wastage),
-					title=frappe._("Missing Wastage Log"),
+			if existing:
+				continue
+
+			# Get first process's contractor for the FWL
+			contractor = None
+			for p in self.get("processes") or []:
+				if p.contractor:
+					contractor = p.contractor
+					break
+
+			try:
+				fwl = frappe.new_doc("Fabric Wastage Log")
+				fwl.job_work_order = self.name
+				fwl.contractor = contractor
+				fwl.date_logged = return_row.date_received or today()
+				fwl.qty_sent = self.qty_sent
+				fwl.wastage_qty = return_row.wastage_qty
+				fwl.wastage_category = "Contractor Damage"
+				fwl.remarks = return_row.wastage_reason or "Auto-generated from Job Work Order return"
+				fwl.raw_material_batch = self.raw_material_batch
+				fwl.flags.ignore_permissions = True
+				fwl.insert()
+			except Exception:
+				frappe.log_error(
+					frappe.get_traceback(),
+					frappe._("Auto-create Fabric Wastage Log failed for JWO: {0}").format(self.name),
 				)
 
 	def get_first_processing_contractor(self):
