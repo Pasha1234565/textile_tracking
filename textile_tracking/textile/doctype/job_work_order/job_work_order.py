@@ -30,10 +30,50 @@ class JobWorkOrder(Document):
 	def on_submit(self):
 		self.create_stock_transfer_on_send()
 		self.assign_process_numbers()
+		self.create_initial_fabric_wastage_log()
 
 	def on_update_after_submit(self):
-		self.auto_create_fabric_wastage_logs()
+		self.auto_create_fabric_wastage_logs_from_returns()
 		self.reconcile_returns()
+
+	def create_initial_fabric_wastage_log(self):
+		"""Create an initial placeholder Fabric Wastage Log on JWO submission.
+
+		This ensures every submitted JWO has at least one FWL entry.
+		When returns with wastage are later recorded, additional FWLs
+		are created by auto_create_fabric_wastage_logs_from_returns().
+		"""
+		# Skip if FWL already exists for this JWO
+		if frappe.db.exists("Fabric Wastage Log", {"job_work_order": self.name}):
+			return
+
+		# Get first process's contractor
+		contractor = None
+		for p in self.get("processes") or []:
+			if p.contractor:
+				contractor = p.contractor
+				break
+
+		if not contractor:
+			return
+
+		try:
+			fwl = frappe.new_doc("Fabric Wastage Log")
+			fwl.job_work_order = self.name
+			fwl.contractor = contractor
+			fwl.date_logged = today()
+			fwl.qty_sent = self.qty_sent
+			fwl.wastage_qty = 0
+			fwl.wastage_category = "Cutting Loss"
+			fwl.remarks = "Auto-created on Job Work Order submission"
+			fwl.raw_material_batch = self.raw_material_batch
+			fwl.flags.ignore_permissions = True
+			fwl.insert()
+		except Exception:
+			frappe.log_error(
+				frappe.get_traceback(),
+				frappe._("Initial Fabric Wastage Log creation failed for JWO: {0}").format(self.name),
+			)
 
 	def auto_populate_processes(self):
 		"""Auto-populate processes based on selected garment type."""
@@ -86,7 +126,7 @@ class JobWorkOrder(Document):
 			elif total_received >= total_sent:
 				self.status = "Received"
 
-	def auto_create_fabric_wastage_logs(self):
+	def auto_create_fabric_wastage_logs_from_returns(self):
 		"""Auto-create Fabric Wastage Log entries for any returns with wastage.
 
 		This runs on every update after submit so that FWLs are always
