@@ -9,18 +9,73 @@ frappe.ui.form.on('Job Work Order', {
 	},
 
 	refresh: function(frm) {
-		// Show process numbers in the grid
-		refresh_process_numbers(frm);
+		if (frm.doc.__islocal) return;
+
+		// Force reload process data from server to ensure grid populates
+		frappe.call({
+			method: 'frappe.client.get',
+			args: {
+				doctype: 'Job Work Order',
+				name: frm.doc.name
+			},
+			callback: function(r) {
+				if (r.message && r.message.processes) {
+					// Clear and re-set the processes table with server data
+					var processes = r.message.processes || [];
+					if (processes.length > 0) {
+						frm.clear_table('processes');
+						$.each(processes, function(i, row) {
+							var child = frm.add_child('processes');
+							child.process_no = row.process_no || (i + 1);
+							child.process_name = row.process_name || '';
+							child.contractor = row.contractor || '';
+							child.date_sent = row.date_sent || '';
+							child.expected_return_date = row.expected_return_date || '';
+							child.actual_return_date = row.actual_return_date || '';
+							child.status = row.status || 'Not Started';
+							child.qty_sent = row.qty_sent || 0;
+							child.rate_per_piece = row.rate_per_piece || 0;
+							child.notes = row.notes || '';
+						});
+						refresh_field('processes');
+						refresh_process_numbers(frm);
+					}
+				}
+			}
+		});
+
+		// Also reload returns data
+		frappe.call({
+			method: 'frappe.client.get',
+			args: {
+				doctype: 'Job Work Order',
+				name: frm.doc.name
+			},
+			callback: function(r) {
+				if (r.message && r.message.job_work_returns) {
+					var returns = r.message.job_work_returns || [];
+					if (returns.length > 0) {
+						frm.clear_table('job_work_returns');
+						$.each(returns, function(i, row) {
+							var child = frm.add_child('job_work_returns');
+							child.date_received = row.date_received || '';
+							child.qty_received = row.qty_received || 0;
+							child.qty_rejected = row.qty_rejected || 0;
+							child.wastage_qty = row.wastage_qty || 0;
+							child.wastage_reason = row.wastage_reason || '';
+						});
+						refresh_field('job_work_returns');
+					}
+				}
+			}
+		});
 	},
 
 	garment_type: function(frm) {
-		// When garment type changes, processes will auto-populate via server-side validate
-		// Just refresh to show the updated process numbers
 		refresh_process_numbers(frm);
 	},
 
 	validate: function(frm) {
-		// Ensure process numbers are assigned before save
 		refresh_process_numbers(frm);
 	}
 });
@@ -47,7 +102,6 @@ frappe.ui.form.on('Job Work Order Process', {
 
 	process_name: function(frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
-		// If contractor rate card exists for this process, auto-fetch rate
 		if (row.contractor && row.process_name) {
 			frappe.call({
 				method: 'frappe.client.get_list',
@@ -71,7 +125,6 @@ frappe.ui.form.on('Job Work Order Process', {
 
 	contractor: function(frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
-		// Auto-fetch rate from contractor's rate card
 		if (row.contractor && row.process_name) {
 			frappe.call({
 				method: 'frappe.client.get_list',
@@ -95,7 +148,6 @@ frappe.ui.form.on('Job Work Order Process', {
 });
 
 function refresh_process_numbers(frm) {
-	// Re-number processes sequentially using frappe.model.set_value for proper reactivity
 	var rows = frm.doc.processes || [];
 	$.each(rows, function(i, p) {
 		if (p.name) {
