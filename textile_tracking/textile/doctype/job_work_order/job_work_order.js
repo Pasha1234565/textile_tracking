@@ -95,9 +95,16 @@ frappe.ui.form.on('Job Work Order Process', {
 });
 
 function refresh_process_numbers(frm) {
-	// Re-number processes sequentially
-	$.each(frm.doc.processes || [], function(i, p) {
-		p.process_no = i + 1;
+	// Re-number processes sequentially using frappe.model.set_value for proper reactivity
+	var rows = frm.doc.processes || [];
+	$.each(rows, function(i, p) {
+		if (p.name) {
+			frappe.model.set_value(p.doctype, p.name, 'process_no', i + 1);
+		} else {
+			p.process_no = i + 1;
+		}
 	});
-	refresh_field('processes');
+	if (rows.length > 0) {
+		refresh_field('processes');
+	}
 }

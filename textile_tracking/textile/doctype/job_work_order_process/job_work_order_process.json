@@ -17,7 +17,7 @@
    "label": "#",
    "in_list_view": 1,
    "columns": 1,
-   "read_only": 1,
+   "read_only": 0,
    "description": "Auto-assigned process number",
    "allow_on_submit": 1
   },
