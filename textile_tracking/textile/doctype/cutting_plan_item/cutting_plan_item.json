@@ -8,14 +8,6 @@
  "editable_grid": 1,
  "fields": [
   {
-   "fieldname": "pattern_template",
-   "fieldtype": "Link",
-   "label": "Pattern Template",
-   "options": "Pattern Template",
-   "in_list_view": 1,
-   "columns": 3
-  },
-  {
    "fieldname": "piece_name",
    "fieldtype": "Data",
    "label": "Piece Name",

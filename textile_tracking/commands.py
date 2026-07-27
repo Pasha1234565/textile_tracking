@@ -91,9 +91,6 @@ def insert_demo_data_command():
 			_create_demo_looms()
 			frappe.db.commit()
 
-			_create_demo_patterns()
-			frappe.db.commit()
-
 			_create_demo_vendor_deliveries()
 			frappe.db.commit()
 
@@ -642,67 +639,6 @@ def _create_demo_looms():
 			})
 	print("  ✅ Created demo Machine Output Logs")
 
-
-def _create_demo_patterns():
-	"""Insert demo Pattern Template and Cutting Plan."""
-	now = now_datetime()
-	uom = frappe.db.get_value("UOM", {}, "name") or "Meter"
-
-	# Create a pattern template for a T-Shirt
-	frappe.db.sql("""
-		INSERT INTO `tabPattern Template`
-			(name, naming_series, template_name, total_area_sq_m,
-			 creation, modified, modified_by, owner, docstatus, idx)
-		VALUES
-			('PT-DEMO-0001', 'PT-DEMO-', 'T-Shirt Basic', 1.76,
-			 %(now)s, %(now)s, 'Administrator', 'Administrator', 0, 1)
-	""", {"now": now})
-
-	# Add pattern pieces
-	pieces = [
-		("PT-DEMO-0001", "Front Body", 70, 80, 1),
-		("PT-DEMO-0001", "Back Body", 70, 80, 1),
-		("PT-DEMO-0001", "Sleeve", 55, 60, 2),
-		("PT-DEMO-0001", "Collar", 20, 10, 1),
-	]
-	for idx, (parent, pname, w, h, qty) in enumerate(pieces, 1):
-		frappe.db.sql("""
-			INSERT INTO `tabPattern Piece`
-				(name, parent, parenttype, parentfield, idx,
-				 piece_name, width_cm, height_cm, qty_per_roll,
-				 creation, modified, modified_by, owner, docstatus)
-			VALUES
-				(%(name)s, %(parent)s, 'Pattern Template', 'pieces', %(idx)s,
-				 %(piece)s, %(width)s, %(height)s, %(qty)s,
-				 %(now)s, %(now)s, 'Administrator', 'Administrator', 0)
-		""", {
-			"name": frappe.generate_hash("", 10),
-			"parent": parent,
-			"idx": idx,
-			"piece": pname,
-			"width": w,
-			"height": h,
-			"qty": qty,
-			"now": now,
-		})
-
-	# Get a fabric roll for the cutting plan
-	roll = frappe.db.get_value("Fabric Roll", {"docstatus": 1}, "name")
-	if roll:
-		frappe.db.sql("""
-			INSERT INTO `tabCutting Plan`
-				(name, naming_series, cutting_plan_name, fabric_roll,
-				 roll_length_meters, roll_width_cm, total_fabric_used, estimated_waste_pct,
-				 docstatus,
-				 creation, modified, modified_by, owner, idx)
-			VALUES
-				('CP-DEMO-0001', 'CP-DEMO-', 'T-Shirt Batch 1', %(roll)s,
-				 480, 150, 60.5, 12.3, 1,
-				 %(now)s, %(now)s, 'Administrator', 'Administrator', 1)
-		""", {"roll": roll, "now": now})
-		print(f"  ✅ Created demo Cutting Plan for roll: {roll}")
-
-	print("  ✅ Created demo Pattern Template: T-Shirt Basic")
 
 
 def _create_demo_vendor_deliveries():
