@@ -6,6 +6,8 @@ from frappe.utils import nowdate
 
 @frappe.whitelist()
 def get_process_data(docname):
+	frappe.has_permission("Job Work Order", "read", throw=True)
+
 	"""Fetch Job Work Order child table data for reliable client-side display."""
 	processes = frappe.get_all(
 		"Job Work Order Process",
@@ -28,6 +30,8 @@ def diagnose_jwo(docname):
 
 	Call from browser: /api/method/textile_tracking.textile.api.diagnose_jwo?docname=JWO-2026-0034
 	"""
+	frappe.has_permission("Job Work Order", "read", throw=True)
+
 	result = {}
 
 	# Check if document exists
@@ -61,6 +65,18 @@ def diagnose_jwo(docname):
 	except Exception as e:
 		result["all_processes_error"] = str(e)
 
+	# Also check ALL rows in return table
+	try:
+		all_returns = frappe.db.sql("""
+			SELECT name, parent, parenttype, parentfield, qty_received, idx
+			FROM `tabJob Work Return`
+			LIMIT 20
+		""", as_dict=True)
+		result["all_returns_count"] = len(all_returns)
+		result["sample_returns"] = all_returns[:5]
+	except Exception as e:
+		result["all_returns_error"] = str(e)
+
 	# Check specific parent match
 	try:
 		matched = frappe.db.sql("""
@@ -90,6 +106,18 @@ def diagnose_jwo(docname):
 		result["loose_parent_match"] = loose_match[0][0] if loose_match else 0
 	except Exception as e:
 		result["loose_match_error"] = str(e)
+
+	# Check the SAVE history — did this JWO recently fail to save?
+	try:
+		errors = frappe.db.sql("""
+			SELECT name, creation, parent
+			FROM `tabError Snapshot`
+			WHERE parent = %s
+			ORDER BY creation DESC LIMIT 5
+		""", docname, as_dict=True)
+		result["related_errors"] = errors
+	except Exception:
+		result["related_errors"] = []
 
 	return result
 

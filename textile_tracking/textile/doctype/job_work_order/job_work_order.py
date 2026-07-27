@@ -76,6 +76,16 @@ class JobWorkOrder(Document):
 		self.assign_process_numbers()
 		self.update_status_based_on_returns()
 
+		# ── TRACE: Log incoming child data for diagnostics ──
+		if frappe.flags.in_test:
+			return
+		p_count = len(self.get("processes") or [])
+		r_count = len(self.get("job_work_returns") or [])
+		frappe.log_error(
+			f"JWO {self.name} validate() — processes: {p_count}, returns: {r_count}, docstatus: {self.docstatus}",
+			"JWO Save Trace"
+		)
+
 	def on_submit(self):
 		self.create_stock_transfer_on_send()
 		self.assign_process_numbers()

@@ -36,6 +36,52 @@ frappe.ui.form.on('Job Work Order', {
 		});
 
 		populate_child_tables(frm);
+
+		// Also call diagnose_jwo to check DB state
+		frappe.call({
+			method: 'textile_tracking.textile.api.diagnose_jwo',
+			args: { docname: frm.doc.name },
+			callback: function(r) {
+				if (!r || !r.message) return;
+				var d = r.message;
+				var diagMsg = "=== DATABASE DIAGNOSTIC ===\n\n";
+				diagMsg += "Document: " + (d.doc_info ? (d.doc_info.name + " (status=" + d.doc_info.docstatus + ")") : "?") + "\n";
+				diagMsg += "Rows in process TABLE (any JWO): " + (d.all_processes_count || 0) + "\n";
+				diagMsg += "Rows matching THIS JWO: " + (d.parent_matched_count || 0) + "\n";
+				diagMsg += "Rows with NULL/empty parent: " + (d.null_parent_count || 0) + "\n";
+				diagMsg += "Rows in return TABLE (any JWO): " + (d.all_returns_count || 0) + "\n";
+				diagMsg += "\nSample process rows (first 5 in DB):\n";
+				if (d.sample_processes && d.sample_processes.length > 0) {
+					d.sample_processes.forEach(function(row) {
+						diagMsg += "  - name=" + (row.name || '?') + " parent=" + (row.parent || 'NULL') + " type=" + (row.parenttype || 'NULL') + " proc=" + (row.process_name || '?') + "\n";
+					});
+				} else {
+					diagMsg += "  (none — table is EMPTY)\n";
+				}
+				diagMsg += "\nSample return rows (first 5 in DB):\n";
+				if (d.sample_returns && d.sample_returns.length > 0) {
+					d.sample_returns.forEach(function(row) {
+						diagMsg += "  - name=" + (row.name || '?') + " parent=" + (row.parent || 'NULL') + " qty=" + (row.qty_received || 0) + "\n";
+					});
+				} else {
+					diagMsg += "  (none — table is EMPTY)\n";
+				}
+				diagMsg += "\nRecent errors related to this JWO: " + ((d.related_errors || []).length) + "\n";
+
+				frappe.msgprint({
+					title: "JWO DB Diagnostic",
+					indicator: "orange",
+					message: '<pre style="font-size:12px;max-height:400px;overflow:auto;">' + diagMsg + '</pre>'
+				});
+			},
+			error: function(err) {
+				frappe.msgprint({
+					title: "JWO DB Diagnostic",
+					indicator: "red",
+					message: "Diagnose API call failed: " + JSON.stringify(err)
+				});
+			}
+		});
 	},
 
 	garment_type: function(frm) {
