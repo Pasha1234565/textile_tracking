@@ -28,11 +28,7 @@ doctype_class = {}
 
 # Document Events
 # ------------------------------
-doc_events = {
-	"Job Work Order": {
-		"onload": "textile_tracking.textile.api.ensure_child_data_on_load",
-	}
-}
+# (none - child table data is loaded via JS fallback calling api.get_process_data)
 
 # Scheduled Tasks
 # ------------------------------
