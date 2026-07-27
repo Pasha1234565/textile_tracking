@@ -6,20 +6,12 @@ frappe.ui.form.on('Job Work Order', {
 	},
 
 	onload: function(frm) {
-		if (frm.doc.__islocal) return;
-		populate_child_tables(frm);
+		// Data loading handled in refresh() - the standard Frappe hook for this
 	},
 
 	refresh: function(frm) {
 		if (frm.doc.__islocal) return;
-
-		if (frm.doc.processes && frm.doc.processes.length > 0) {
-			refresh_process_numbers(frm);
-		} else if (!frm._fetched) {
-			// Only fetch once to avoid duplicate API calls
-			frm._fetched = true;
-			populate_child_tables(frm);
-		}
+		populate_child_tables(frm);
 	},
 
 	garment_type: function(frm) {
