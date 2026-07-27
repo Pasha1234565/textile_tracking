@@ -70,6 +70,23 @@ class JobWorkOrder(Document):
 		# (schema caching issues, timing with before_request hooks, etc.)
 		self._ensure_child_parent_columns()
 
+	def on_update(self):
+		"""After every save/update, ensure child table parent columns are set.
+
+		on_update() runs AFTER Frappe's ORM has saved child rows to the database.
+		For new documents, validate() runs BEFORE the document gets its name,
+		so _ensure_child_parent_columns() can't work. on_update() is the correct
+		place because:
+		1. The document name is always set (already saved)
+		2. Child rows exist in the database (the ORM just inserted them)
+		3. We can use raw SQL to fix any rows saved with NULL parent
+
+		This is the definitive fix for the NULL parent column issue.
+		"""
+		if self.get("__islocal") or not self.name:
+			return
+		self._fix_child_table_parent_columns_in_db()
+
 	def on_submit(self):
 		self.create_stock_transfer_on_send()
 		self.assign_process_numbers()
@@ -80,14 +97,12 @@ class JobWorkOrder(Document):
 		self.reconcile_returns()
 
 	def _ensure_child_parent_columns(self):
-		"""Explicitly set parent, parenttype, and parentfield on all child table rows.
+		"""Explicitly set parent, parenttype, and parentfield on child Document objects.
 
-		This ensures Frappe's ORM can properly persist child rows with correct
-		parent references. Without this, the ORM may insert rows with NULL parent
-		columns, making them invisible when loading the parent document later.
-
-		Uses self.meta.get_table_fields() dynamically so any new Table fields
-		added to the DocType JSON in the future are automatically covered.
+		This runs in validate() as a best-practice, but for NEW documents
+		validate() runs before the name is assigned, so this is a no-op.
+		The definitive fix is in _fix_child_table_parent_columns_in_db()
+		which runs in on_update() with raw SQL after the ORM has saved.
 		"""
 		if not self.name:
 			return
@@ -98,6 +113,47 @@ class JobWorkOrder(Document):
 				row.parent = self.name
 				row.parenttype = self.doctype
 				row.parentfield = table_field.fieldname
+
+	def _fix_child_table_parent_columns_in_db(self):
+		"""Use raw SQL to fix child rows with NULL/missing parent columns.
+
+		This runs in on_update(), AFTER Frappe's ORM has saved child rows
+		to the database. Since both validate() and the ORM's internal save
+		mechanism may set parent columns when self.name is still None
+		(for new documents), child rows end up with NULL parent.
+
+		This method directly updates those rows in the database using
+		the unique 'name' column of each child row, so there is no
+		ambiguity about which rows belong to which document.
+		"""
+		if not self.name:
+			return
+
+		for table_field in self.meta.get_table_fields():
+			rows = self.get(table_field.fieldname) or []
+			child_table = frappe.unscrub(table_field.options)
+			for row in rows:
+				if row.name and (not row.parent or not row.parenttype):
+					try:
+						frappe.db.sql("""
+							UPDATE `tab{child_table}`
+							SET parent = %(parent)s,
+								parenttype = %(parenttype)s,
+								parentfield = %(parentfield)s
+							WHERE name = %(name)s
+						""".format(child_table=child_table), {
+							"parent": self.name,
+							"parenttype": self.doctype,
+							"parentfield": table_field.fieldname,
+							"name": row.name,
+						})
+						except Exception:
+							frappe.log_error(
+								frappe.get_traceback(),
+								frappe._("Failed to fix parent columns for {0} row {1}").format(
+									child_table, row.name
+								),
+							)
 
 	def create_initial_fabric_wastage_log(self):
 		"""Create an initial placeholder Fabric Wastage Log on JWO submission."""
