@@ -11,6 +11,30 @@ frappe.ui.form.on('Job Work Order', {
 
 	refresh: function(frm) {
 		if (frm.doc.__islocal) return;
+
+		// ── DIAGNOSTIC: Show current state of processes ──
+		var pLen = (frm.doc.processes || []).length;
+		var rLen = (frm.doc.job_work_returns || []).length;
+		var msg = "JWO Refresh Diagnostics:\n";
+		msg += "• Document: " + frm.doc.name + "\n";
+		msg += "• DocStatus: " + frm.doc.docstatus + " (0=Draft, 1=Submitted)\n";
+		msg += "• frm.doc.processes length: " + pLen + "\n";
+		msg += "• frm.doc.job_work_returns length: " + rLen + "\n";
+		msg += "• __onload keys: " + (frm.__onload ? Object.keys(frm.__onload).join(", ") : "NO __ONLOAD") + "\n";
+
+		if (pLen > 0) {
+			var first = frm.doc.processes[0];
+			msg += "• First process: " + (first.process_name || "?") + " / " + (first.contractor || "?");
+		} else {
+			msg += "• Grid shows: No Data";
+		}
+
+		frappe.msgprint({
+			title: "JWO Debug",
+			indicator: "blue",
+			message: msg
+		});
+
 		populate_child_tables(frm);
 	},
 
@@ -85,14 +109,25 @@ frappe.ui.form.on('Job Work Order Process', {
 
 /**
  * Main entry point: populate child tables from available data sources.
- * Priority: 1) frm.doc (already loaded), 2) frm.__onload (server-side), 3) API call
+ * Priority: 1) frm.doc (already loaded), 2) API call
  */
 function populate_child_tables(frm) {
 	// Strategy 1: Data already on the document (from server-side onload())
 	if (frm.doc.processes && frm.doc.processes.length > 0) {
+		frappe.msgprint({
+			title: "JWO Debug - Strategy 1",
+			indicator: "green",
+			message: "Data FOUND directly on frm.doc.processes (" + frm.doc.processes.length + " rows). Refreshing grid..."
+		});
 		refresh_process_numbers(frm);
 		return;
 	}
+
+	frappe.msgprint({
+		title: "JWO Debug - Strategy 1 Failed",
+		indicator: "red",
+		message: "frm.doc.processes is EMPTY. Falling back to API call..."
+	});
 
 	// Strategy 2: Fetch from server via API
 	if (!frm._api_called) {
@@ -118,13 +153,34 @@ function fill_child_grid(frm, fieldname, child_doctype, data, field_setter) {
  * Fetch child table data from server via whitelisted API.
  */
 function fetch_child_data(frm) {
+	frappe.msgprint({
+		title: "JWO Debug - API Call",
+		indicator: "orange",
+		message: "Calling get_process_data API for " + frm.doc.name + "..."
+	});
+
 	frappe.call({
 		method: 'textile_tracking.textile.api.get_process_data',
 		args: { docname: frm.doc.name },
 		callback: function(r) {
-			if (!r || !r.message) return;
+			if (!r || !r.message) {
+				frappe.msgprint({
+					title: "JWO Debug - API Failed",
+					indicator: "red",
+					message: "API returned null/undefined response!"
+				});
+				return;
+			}
 
 			var processes = r.message.processes || [];
+			var returns = r.message.job_work_returns || [];
+
+			frappe.msgprint({
+				title: "JWO Debug - API Result",
+				indicator: processes.length > 0 ? "green" : "orange",
+				message: "API returned " + processes.length + " processes and " + returns.length + " returns for " + frm.doc.name
+			});
+
 			if (processes.length > 0 && (!frm.doc.processes || frm.doc.processes.length === 0)) {
 				fill_child_grid(frm, 'processes', 'Job Work Order Process', processes, function(child, row, i) {
 					child.process_no = row.process_no || row.idx || (i + 1);
@@ -139,9 +195,14 @@ function fetch_child_data(frm) {
 					child.notes = row.notes || '';
 				});
 				refresh_process_numbers(frm);
+
+				frappe.msgprint({
+					title: "JWO Debug - Grid Populated",
+					indicator: "green",
+					message: "Processes grid populated with " + processes.length + " rows. Check if grid shows data now."
+				});
 			}
 
-			var returns = r.message.job_work_returns || [];
 			if (returns.length > 0 && (!frm.doc.job_work_returns || frm.doc.job_work_returns.length === 0)) {
 				fill_child_grid(frm, 'job_work_returns', 'Job Work Return', returns, function(child, row) {
 					child.date_received = row.date_received || '';
@@ -153,6 +214,11 @@ function fetch_child_data(frm) {
 			}
 		},
 		error: function(err) {
+			frappe.msgprint({
+				title: "JWO Debug - API Error",
+				indicator: "red",
+				message: "API call failed: " + JSON.stringify(err)
+			});
 			console.error('JWO: Failed to load child data:', err);
 		}
 	});
