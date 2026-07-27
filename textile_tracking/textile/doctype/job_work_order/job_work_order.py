@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import today
+from frappe.utils import today, flt
 
 
 # Mapping: Garment Type -> List of processes (in order)
@@ -231,18 +231,25 @@ class JobWorkOrder(Document):
 				self.status = "Received"
 
 	def auto_create_fabric_wastage_logs_from_returns(self):
-		"""Auto-create Fabric Wastage Log entries for any returns with wastage."""
+		"""Auto-create Fabric Wastage Log entries for returns.
+
+		Wastage is calculated as: qty_sent - qty_received (per return row),
+		NOT from the manually entered wastage_qty field.
+		"""
 		if not self.get("job_work_returns"):
 			return
 
 		for return_row in self.get("job_work_returns"):
-			if not return_row.wastage_qty or return_row.wastage_qty <= 0:
+			# Calculate wastage from qty_sent and qty_received
+			calculated_wastage = flt(self.qty_sent) - flt(return_row.qty_received)
+			if calculated_wastage <= 0:
 				continue
 
+			# Avoid duplicates: use date_received + qty_received as unique key
 			existing = frappe.db.exists("Fabric Wastage Log", {
 				"job_work_order": self.name,
-				"wastage_qty": return_row.wastage_qty,
 				"date_logged": return_row.date_received or today(),
+				"wastage_qty": calculated_wastage,
 			})
 			if existing:
 				continue
@@ -259,9 +266,12 @@ class JobWorkOrder(Document):
 				fwl.contractor = contractor
 				fwl.date_logged = return_row.date_received or today()
 				fwl.qty_sent = self.qty_sent
-				fwl.wastage_qty = return_row.wastage_qty
+				fwl.wastage_qty = calculated_wastage
 				fwl.wastage_category = "Contractor Damage"
-				fwl.remarks = return_row.wastage_reason or "Auto-generated from Job Work Order return"
+				fwl.remarks = (
+					f"Auto-calculated: {self.qty_sent} sent - {return_row.qty_received} received = {calculated_wastage} wasted. "
+					f"{return_row.wastage_reason or ''}"
+				)
 				fwl.raw_material_batch = self.raw_material_batch
 				fwl.flags.ignore_permissions = True
 				fwl.insert()
