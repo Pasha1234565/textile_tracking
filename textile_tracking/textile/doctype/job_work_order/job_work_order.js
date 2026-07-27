@@ -7,19 +7,21 @@ frappe.ui.form.on('Job Work Order', {
 
 	onload: function(frm) {
 		if (frm.doc.__islocal) return;
-		load_jwo_child_data(frm);
+		populate_from_onload(frm);
 	},
 
 	refresh: function(frm) {
 		if (frm.doc.__islocal) return;
 
-		// Also check in refresh in case onload didn't fire or data is still empty
+		// Try populating from __onload data if grid is still empty
 		var hasData = frm.doc.processes && frm.doc.processes.length > 0;
-		if (hasData) {
+		if (!hasData) {
+			populate_from_onload(frm);
+		}
+
+		// Update process numbers if data is loaded
+		if (frm.doc.processes && frm.doc.processes.length > 0) {
 			refresh_process_numbers(frm);
-		} else {
-			// Fallback: try loading again if grid is empty
-			load_jwo_child_data(frm);
 		}
 	},
 
@@ -92,62 +94,45 @@ frappe.ui.form.on('Job Work Order Process', {
 	}
 });
 
-function load_jwo_child_data(frm) {
-	if (frm.doc.__islocal) return;
-
-	// Skip if data is already loaded
-	if (frm.doc.processes && frm.doc.processes.length > 0) {
-		return;
+function populate_from_onload(frm) {
+	// Populate processes from __onload data (set by server-side onload hook)
+	if (frm.__onload && frm.__onload.processes && frm.__onload.processes.length > 0) {
+		var needsLoad = !frm.doc.processes || frm.doc.processes.length === 0;
+		if (needsLoad) {
+			frm.doc.processes = [];
+			$.each(frm.__onload.processes, function(i, row) {
+				var child = frappe.model.add_child(frm.doc, 'Job Work Order Process', 'processes');
+				child.process_no = row.process_no || row.idx || (i + 1);
+				child.process_name = row.process_name || '';
+				child.contractor = row.contractor || '';
+				child.date_sent = row.date_sent || '';
+				child.expected_return_date = row.expected_return_date || '';
+				child.actual_return_date = row.actual_return_date || '';
+				child.status = row.status || 'Not Started';
+				child.qty_sent = row.qty_sent || 0;
+				child.rate_per_piece = row.rate_per_piece || 0;
+				child.notes = row.notes || '';
+			});
+			frm.refresh_field('processes');
+		}
 	}
 
-	frappe.call({
-		method: 'textile_tracking.textile.doctype.job_work_order.job_work_order.get_jwo_child_data',
-		args: { docname: frm.doc.name },
-		callback: function(r) {
-			if (!r.message) return;
-
-			var processes = r.message.processes || [];
-			var returns = r.message.job_work_returns || [];
-
-			// Only populate if still empty
-			var stillEmpty = !frm.doc.processes || frm.doc.processes.length === 0;
-
-			if (stillEmpty && processes.length > 0) {
-				frm.doc.processes = [];
-				$.each(processes, function(i, row) {
-					var child = frappe.model.add_child(frm.doc, 'Job Work Order Process', 'processes');
-					child.process_no = row.process_no || row.idx || (i + 1);
-					child.process_name = row.process_name || '';
-					child.contractor = row.contractor || '';
-					child.date_sent = row.date_sent || '';
-					child.expected_return_date = row.expected_return_date || '';
-					child.actual_return_date = row.actual_return_date || '';
-					child.status = row.status || 'Not Started';
-					child.qty_sent = row.qty_sent || 0;
-					child.rate_per_piece = row.rate_per_piece || 0;
-					child.notes = row.notes || '';
-				});
-				frm.refresh_field('processes');
-			}
-
-			var returnsEmpty = !frm.doc.job_work_returns || frm.doc.job_work_returns.length === 0;
-			if (returnsEmpty && returns.length > 0) {
-				frm.doc.job_work_returns = [];
-				$.each(returns, function(i, row) {
-					var child = frappe.model.add_child(frm.doc, 'Job Work Return', 'job_work_returns');
-					child.date_received = row.date_received || '';
-					child.qty_received = row.qty_received || 0;
-					child.qty_rejected = row.qty_rejected || 0;
-					child.wastage_qty = row.wastage_qty || 0;
-					child.wastage_reason = row.wastage_reason || '';
-				});
-				frm.refresh_field('job_work_returns');
-			}
-		},
-		error: function(err) {
-			console.error('Failed to load JWO child data:', err);
+	// Populate returns from __onload
+	if (frm.__onload && frm.__onload.job_work_returns && frm.__onload.job_work_returns.length > 0) {
+		var needsLoad = !frm.doc.job_work_returns || frm.doc.job_work_returns.length === 0;
+		if (needsLoad) {
+			frm.doc.job_work_returns = [];
+			$.each(frm.__onload.job_work_returns, function(i, row) {
+				var child = frappe.model.add_child(frm.doc, 'Job Work Return', 'job_work_returns');
+				child.date_received = row.date_received || '';
+				child.qty_received = row.qty_received || 0;
+				child.qty_rejected = row.qty_rejected || 0;
+				child.wastage_qty = row.wastage_qty || 0;
+				child.wastage_reason = row.wastage_reason || '';
+			});
+			frm.refresh_field('job_work_returns');
 		}
-	});
+	}
 }
 
 function refresh_process_numbers(frm) {
