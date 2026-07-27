@@ -1,403 +1,417 @@
-# 🧵 Textile Tracking & Job Work Management
+# README
 
-A comprehensive **Frappe/ERPNext** application for textile and garment manufacturers to manage end-to-end **job work operations**, contractor management, fabric traceability, cutting optimization, and wastage analytics. Built for textile mills, garment manufacturers, and production houses.
+## Textile Tracking — Job Work & Fabric Traceability System
 
-## 📋 Overview
-
-This application provides a complete digital solution for managing the lifecycle of textile production sent to external contractors — from raw material procurement and fabric roll tracking through job work orders, cutting plans, production scheduling, and wastage analysis. It includes robust reporting, a Digital Product Passport for EU 2027 compliance, a factory floor dashboard, and a supplier collaboration portal.
-
-> 🔄 **Context**: This application was purpose-built for the textile and garment manufacturing industry, covering the full subcontracting workflow from raw material batch to finished fabric roll with full traceability.
-
----
-
-## ✨ Features
-
-### 🏭 Contractor Management
-- Register and manage **Job Contractors** with detailed profiles and rate cards
-- Categorize contractors by process type (Cutting, Stitching, Dyeing, Embroidery, Finishing)
-- Track contractor wastage analytics with auto-calculated aggregates
-- Rate card management with per-process pricing and effective dates
-
-### 📦 Job Work Orders
-- Create full **Job Work Orders** with multi-process tracking
-- Per-process contractor assignment, dates, and status tracking
-- Workflow-driven status (Draft → Sent → Partially Received → Received → Closed)
-- Automatic Stock Entry creation for material transfer and receipt (ERPNext integration)
-- Auto-populate processes based on garment type (Shirt, T-Shirt, Saree, Kurta, etc.)
-- Garment-type-specific process mapping (10 garment types supported)
-
-### ♻️ Fabric Wastage Management
-- **Fabric Wastage Log** with detailed cause categorization
-- Wastage categories: Cutting Loss, Contractor Damage, Transit Damage, Quality Reject
-- Real-time wastage percentage calculation
-- High-wastage alerts (>15%) with system notifications
-- Contractor-wise aggregated wastage analytics
-
-### 🧶 Raw Material Traceability
-- **Raw Material Batch** tracking with full origin details
-- Supplier batch number and country of origin tracking
-- Certification tracking (GOTS, OEKO-TEX, BCI, Fair Trade, Organic)
-- Storage location management with handling instructions
-- Trace forward to Fabric Rolls and Job Work Orders
-
-### 📜 Fabric Roll Management
-- Track fabric rolls with measurements, grade, and quality status
-- **Digital Product Passport** (EU 2027 compliant) with QR code generation
-- Daily production tracking per roll
-- Garment production estimates (fabric requirement per garment type/size)
-- Wastage percentage calculation from estimated vs actual production
-- Process history with chronological manufacturing timeline
-
-### ✂️ Cutting Optimization
-- **Pattern Templates** with piece definitions and dimensions
-- **Cutting Plans** linked to fabric rolls
-- Estimated waste percentage per plan
-- Layout preview support for cutting optimization
-
-### 🏗️ Production Scheduling
-- **Production Schedule** with shift-based planning (Morning, Evening, Night)
-- Machine allocation to production items
-- Target meters and time-based scheduling
-- Status tracking (Draft → Planned → In Progress → Completed → Cancelled)
-
-### 🏭 Factory Floor Dashboard
-- Real-time loom/machine status visualization
-- Summary stats (Running, Idle, Down/Maintenance counts)
-- Per-machine metrics: meters produced today, RPM, efficiency, defect count
-- Today's production schedule overview
-- Responsive card-based UI with color-coded status indicators
-
-### 🔗 Supplier Collaboration Portal
-- Web-based portal for external suppliers
-- View and update delivery schedules
-- Revise delivery dates and status (Confirmed, Delayed, Shipped)
-- Stats dashboard (total deliveries, pending updates)
-- Secure login integration with Frappe authentication
-
-### 📊 Reports (5)
-
-| Report | Type | Description |
-|--------|------|-------------|
-| **Contractor Wastage Trend** | Query + Script | Wastage % trends per contractor over time with line chart |
-| **True Cost Per Piece by Contractor** | Script | Calculates real cost including labor + wastage cost with bar chart |
-| **Overdue Job Work Orders** | Query | All orders past expected return date, grouped by contractor |
-| **Cutting Efficiency** | Script | Cutting plan analysis with fabric usage, waste %, and bar chart |
-| **Lot Genealogy** | Script | Complete traceability tree from raw material batch to fabric rolls |
-
-### 🔔 Notifications & Automation
-- Daily contractor wastage stats update (scheduler)
-- Daily overdue job work order alerts (system notifications)
-- Rate card expiry review reminders (90+ days stale)
-- High wastage alerts (>15%) on Fabric Wastage Log submission
-- Workflow-based status transitions on Job Work Orders
-
-### 🔒 Role-Based Access Control
-
-| Role | Access Level |
-|------|-------------|
-| **System Manager** | Full administrative access |
-| **Job Work Manager** | Full CRUD on all doctypes, submit/amend/cancel, rate card visibility |
-| **Contractor Coordinator** | Create and read access, no delete, no rate card visibility |
+**App Name:** Textile Tracking (`textile_tracking`)
+**Module:** Textile
+**Domain:** Textile / Garment Manufacturing (Job Work)
+**Required Apps:** Frappe v15, ERPNext v15 (Stock module, for Stock Entry integration)
+**Repository:** https://github.com/Pasha1234565/textile_tracking.git
 
 ---
 
-## 🏗️ DocTypes (18 Total)
+## TABLE OF CONTENTS
 
-The application includes **18 DocTypes** organized into Master Data, Transactions, and Child Tables.
-
-### Master Data (6)
-
-| DocType | Purpose |
-|---------|---------|
-| **Job Contractor** | External contractors performing textile processes |
-| **Loom** | Factory floor machines with status and performance metrics |
-| **Raw Material Batch** | Incoming raw material with certification and origin tracking |
-| **Fabric Roll** | Finished fabric rolls with measurements and quality grading |
-| **Pattern Template** | Cutting pattern definitions with piece dimensions |
-| **Machine Output Log** | Per-shift machine production logging |
-
-### Transaction DocTypes (5)
-
-| DocType | Purpose |
-|---------|---------|
-| **Job Work Order** | Core transaction — fabric sent for processing (submittable) |
-| **Fabric Wastage Log** | Wastage recording with category and cause tracking |
-| **Cutting Plan** | Cutting layout planning linked to fabric rolls (submittable) |
-| **Production Schedule** | Shift-based production planning (submittable) |
-| **Vendor Delivery Schedule** | Supplier delivery tracking (submittable) |
-
-### Child Tables (7)
-
-| DocType | Parent | Purpose |
-|---------|--------|---------|
-| **Contractor Rate Item** | Job Contractor | Per-process rates with effective dates |
-| **Job Work Order Process** | Job Work Order | Multi-process tracking per order |
-| **Job Work Return** | Job Work Order | Return receipts with wastage logging |
-| **Cutting Plan Item** | Cutting Plan | Pattern pieces in cutting layout |
-| **Pattern Piece** | Pattern Template | Individual piece dimensions and quantities |
-| **Fabric Roll Daily Production** | Fabric Roll | Daily garment production entries |
-| **Process History Entry** | Fabric Roll | Chronological manufacturing timeline |
+1. [Application Overview](#1-application-overview)
+2. [System Architecture](#2-system-architecture)
+3. [Getting Started](#3-getting-started)
+4. [The Day-to-Day Workflow, Step by Step](#4-the-day-to-day-workflow-step-by-step)
+5. [Traceability & Cutting Features](#5-traceability--cutting-features)
+6. [Vendor Portal & Digital Product Passport](#6-vendor-portal--digital-product-passport)
+7. [Reports](#7-reports)
+8. [Workspace Navigation](#8-workspace-navigation)
+9. [Scheduled Tasks & Automation](#9-scheduled-tasks--automation)
+10. [Setup & Configuration (Fixtures)](#10-setup--configuration-fixtures)
+11. [Demo Data](#11-demo-data)
+12. [Troubleshooting](#12-troubleshooting)
+13. [Appendix](#13-appendix)
 
 ---
 
-## 🚀 Installation
+## 1. APPLICATION OVERVIEW
 
-### Prerequisites
-- **Frappe v15+** installed and configured
-- **ERPNext v15+** installed (for stock integration)
-- Python 3.10+
+### 1.1 Purpose
+Textile Tracking is a Frappe/ERPNext application built for textile and garment manufacturers who send fabric or garments out to external contractors for job work (cutting, stitching, dyeing, embroidery, finishing) and need to track the full lifecycle of that material — from raw batch, through job work, to a finished, traceable roll. It covers:
 
-### Step-by-Step Installation
+- **Job Work Management** — sending fabric to contractors, tracking returns, wastage, and rejections per process
+- **Raw Material & Fabric Roll Traceability** — batch-level tracking from supplier through to a rollable, QR-linked "Digital Product Passport"
+- **Cutting & Pattern Management** — cutting plans, pattern templates, and cutting efficiency
+- **Vendor/Supplier Coordination** — a self-service portal for suppliers to confirm or revise delivery schedules
+- **Contractor Performance Analytics** — wastage trends, true cost per piece, and overdue-order tracking
+
+### 1.2 Key Features
+- **19 DocTypes** — 12 document/master DocTypes, 7 child tables
+- **5 Submittable DocTypes** — Job Work Order, Fabric Roll, Cutting Plan, Production Schedule, Vendor Delivery Schedule
+- **1 Workflow** — Job Work Order (Draft → Sent → Partially Received / Received → Closed)
+- **2 Custom Roles** — Job Work Manager, Contractor Coordinator
+- **3 Scheduled Daily Tasks** — contractor wastage stats, overdue order checks, stale rate card alerts
+- **3 Public/Portal Web Pages** — Digital Product Passport (`/dpp`), Loom Dashboard (`/loom-dashboard`), Supplier Portal (`/supplier-portal`)
+- **5 Reports** — wastage trend, cutting efficiency, lot genealogy, overdue orders, true cost per piece
+- **Automatic Stock Integration** — submitting a Job Work Order creates a Material Transfer Stock Entry (when Stock is enabled); logging a full return creates a Material Receipt
+
+---
+
+## 2. SYSTEM ARCHITECTURE
+
+### 2.1 Technology Stack
+- **Framework:** Frappe v15 / ERPNext v15
+- **Database:** MariaDB
+- **Automated Tasks:** Frappe Scheduler (daily)
+- **Optional Dependency:** ERPNext Stock module (for automatic Stock Entry creation on submit/return)
+
+### 2.2 DocType Structure
+
+| # | DocType Name | Type | Card Section | Submittable |
+|---|---------------|------|---------------|:-----------:|
+| 1 | Job Contractor | Document | Master Data | ❌ |
+| 2 | Contractor Rate Item | Child Table | — | ❌ |
+| 3 | Job Work Order | Document | Production | ✅ |
+| 4 | Job Work Order Process | Child Table | — | ❌ |
+| 5 | Job Work Return | Child Table | — | ❌ |
+| 6 | Fabric Wastage Log | Document | Cutting & Waste | ❌ |
+| 7 | Raw Material Batch | Document | Traceability | ❌ |
+| 8 | Fabric Roll | Document | Traceability | ✅ |
+| 9 | Fabric Roll Daily Production | Child Table | — | ❌ |
+| 10 | Process History Entry | Child Table | — | ❌ |
+| 11 | Loom | Document | Master Data | ❌ |
+| 12 | Machine Output Log | Document | — | ❌ |
+| 13 | Cutting Plan | Document | Cutting & Waste | ✅ |
+| 14 | Cutting Plan Item | Child Table | — | ❌ |
+| 15 | Pattern Template | Document | Cutting & Waste | ❌ |
+| 16 | Pattern Piece | Child Table | — | ❌ |
+| 17 | Production Schedule | Document | Production | ✅ |
+| 18 | Production Schedule Item | Child Table | — | ❌ |
+| 19 | Vendor Delivery Schedule | Document | Vendor Portal | ✅ |
+
+### 2.3 Naming Series Convention
+
+| DocType | Prefix | Format |
+|---|---|---|
+| Job Contractor | — | By fieldname (`contractor_name`) |
+| Job Work Order | JWO | `JWO-.YYYY.-.####` |
+| Fabric Wastage Log | FWL | `FWL-.YYYY.-.####` |
+| Raw Material Batch | RMB | `RMB-.YYYY.-.####` |
+| Fabric Roll | FBR | `FBR-.YYYY.-.####` |
+| Loom | — | By fieldname (`machine_id`) |
+| Machine Output Log | MOL | `MOL-.YYYY.-.####` |
+| Cutting Plan | CP | `CP-.YYYY.-.####` |
+| Pattern Template | PT | `PT-.YYYY.-.####` |
+| Production Schedule | PS | `PS-.YYYY.-.####` |
+| Vendor Delivery Schedule | VDS | `VDS-.YYYY.-.####` |
+
+### 2.4 Data Flow Diagram
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                        WORKFLOW OVERVIEW                              │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│  🧵 JOB WORK CYCLE                                                    │
+│  ┌────────────┐   ┌──────────────┐   ┌───────────────┐  ┌──────────┐ │
+│  │Job Contractor│─▶│ Job Work     │─▶│  Job Work      │─▶│ Fabric   │ │
+│  │ (Rate Card)  │  │ Order (JWO)  │  │  Returns       │  │ Wastage  │ │
+│  └────────────┘   └──────┬───────┘   └───────────────┘  │  Log     │ │
+│                          │ on submit                     └──────────┘ │
+│                          ▼                                            │
+│                  ┌──────────────┐   on full return   ┌──────────────┐│
+│                  │ Stock Entry  │◀────────────────────│ Stock Entry  ││
+│                  │ (Transfer)   │                      │ (Receipt)   ││
+│                  └──────────────┘                      └──────────────┘│
+│                                                                        │
+│  📦 TRACEABILITY                                                      │
+│  ┌───────────────┐   ┌──────────┐   ┌───────────────┐                │
+│  │ Raw Material  │──▶│  Fabric  │──▶│  Digital       │                │
+│  │  Batch        │   │  Roll    │   │  Product       │                │
+│  │               │   │          │   │  Passport (/dpp)│               │
+│  └───────────────┘   └──────────┘   └───────────────┘                │
+│                                                                        │
+│  ✂️ CUTTING & PATTERNS                                                │
+│  Pattern Template ──▶ Cutting Plan ──▶ Cutting Efficiency (Report)    │
+│                                                                        │
+│  🚚 VENDOR COORDINATION                                               │
+│  Raw Material Batch ──▶ Vendor Delivery Schedule ──▶ Supplier Portal  │
+│                                                                        │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 3. GETTING STARTED
+
+### 3.1 Installation
+```bash
+# From the bench directory
+bench get-app https://github.com/Pasha1234565/textile_tracking.git
+bench --site your-site.com install-app textile_tracking
+bench --site your-site.com migrate
+```
+
+### 3.2 Role Setup
+Two roles are created automatically on the first migrate after install (via the `setup_workflow_notifications` patch):
+1. **Job Work Manager** — Full operational access: create/write orders, submit/cancel/amend, manage contractors and rate cards
+2. **Contractor Coordinator** — Create/read/write access on Job Work Orders and Fabric Roll records; no submit/amend rights
+
+### 3.3 Stock Integration (Optional)
+If the ERPNext Stock module is enabled and a default warehouse is configured (**Stock Settings → Default Warehouse**, or at least one non-group, non-disabled Warehouse exists), the app will automatically:
+- Create a **Material Transfer** Stock Entry when a Job Work Order is submitted
+- Create a **Material Receipt** Stock Entry once returns fully account for the quantity sent
+
+If Stock isn't set up, Job Work Orders still function normally — the Stock Entry step is skipped silently and logged as an error if it fails.
+
+### 3.4 Initial Configuration
+Before using the app day-to-day, set up your masters:
+1. **Job Contractors** — every contractor you subcontract work to, with their rate card
+2. **Looms** — if you're tracking in-house loom output via Machine Output Log
+3. **Pattern Templates** — if you plan to use Cutting Plans
+
+---
+
+## 4. THE DAY-TO-DAY WORKFLOW, STEP BY STEP
+
+This is the sequence you'll follow for essentially every piece of work you send out. It's worth reading through once in full before you start using the app live.
+
+### Step 1 — Create a Job Contractor
+
+Before any work can be sent out, the contractor receiving it needs to exist in the system.
+
+1. Go to **Textile Tracking → Master Data → Job Contractor**.
+2. Click **+ Add Job Contractor**.
+3. Fill in the **Contractor Name** (required, and must be unique), the **Contractor Type** (the process they perform — Cutting, Stitching, Dyeing, Embroidery, or Finishing), and their **Status** (Active or Inactive).
+4. Set the **Default Wastage Allowance (%)** — for example, 2%.
+5. Add their **Email**, **Phone**, and **Address**.
+6. In the **Rate Card** section, add one row per process they perform: the **Subcontract Process** (e.g. Stitching), the **Rate Per Piece** (e.g. ₹15.00), and the date the rate becomes **Effective From**.
+7. Click **Save**.
+
+> **Wastage Analytics** on this form (Total Qty Sent, Total Wastage Qty, Wastage %) are read-only — they're kept up to date automatically by the daily `daily_update_contractor_wastage_stats` job, not entered by hand.
+
+### Step 2 — Create a Job Work Order
+
+Now you're ready to actually send fabric out for processing.
+
+1. Click the **New Job Work Order** shortcut on the dashboard.
+2. Choose the **Garment Type** and, optionally, the **Source Item** — the fabric or garment being sent.
+3. Enter the **Qty Sent** (pieces or meters).
+4. In the **Processes** table, add a row and choose the **Contractor**, the **Subcontract Process** (e.g. Cutting), and the agreed **Rate Per Piece**.
+5. **Date Sent** on that row defaults to today; set the **Expected Return Date** to when you expect the work back.
+6. If this order is part of a traceable batch, link the **Raw Material Batch** and/or **Fabric Roll** in the Traceability section.
+7. The order starts life with **Status = Draft**. Click **Save**.
+
+### Step 3 — Log Returns
+
+When the contractor sends processed items back — in full or in part:
+
+1. Open the Job Work Order.
+2. Go to the **Job Work Returns** table.
+3. Click **+ Add Row**.
+4. Enter the **Date Received**, the **Qty Received** (good pieces), **Qty Rejected** (received but not up to standard), **Wastage Qty** (pieces lost or damaged), and a short **Wastage Reason**.
+5. Click **Save**.
+
+**Behind the scenes:** if your site has stock features enabled, submitting the order automatically creates a Stock Entry (Material Transfer) so your inventory records stay in sync with what's physically left the building.
+
+### Step 4 — Submit the Order
+
+When you physically hand the fabric over to the contractor, make this official in the system:
+
+1. Open the Job Work Order.
+2. Click **Submit**.
+3. The status automatically changes to **Sent** (driven by the Job Work Order Workflow — see [§4.1](#41-order-status-workflow) below).
+
+
+**Behind the scenes:** once the total quantity received across all returns covers what was sent, the app creates a Stock Entry (Material Receipt) so the processed goods are received back into your company warehouse, and the order's status advances to **Received**.
+
+### Step 5 — Log Wastage (whenever it applies)
+
+If any wastage occurred, it needs its own Fabric Wastage Log entry — separate from the return itself:
+
+1. Go to **Fabric Wastage Log → + Add**.
+2. Link the relevant **Job Work Order**; the **Contractor** field auto-fills from it.
+3. Set the **Date Logged** and enter the **Qty Sent** (matching the order) and **Wastage Qty**.
+4. The **Wastage %** is computed for you automatically.
+5. Choose a **Wastage Category**: **Cutting Loss** (normal, expected waste), **Contractor Damage** (caused by the contractor), **Transit Damage** (damaged in transport), or **Quality Reject** (rejected for poor quality).
+6. Add any **Remarks** that explain the circumstances.
+7. Click **Save**.
+
+> A wastage entry above 15% automatically triggers a **High Wastage Alert** notification to the record owner. Wastage logs also feed the daily contractor stats job and the **Contractor Wastage Trend** report.
+
+### 4.1 Order Status Workflow
+
+Job Work Order status is governed by the **Job Work Order Workflow**:
+
+```
+Draft ──(Send to Contractor)──▶ Sent
+Sent ──(Partial Return Received)──▶ Partially Received
+Sent ──(Full Return Received)──▶ Received
+Partially Received ──(Partial Return Received)──▶ Partially Received
+Partially Received ──(Full Return Received)──▶ Received
+Received ──(Close Order)──▶ Closed
+```
+
+Draft → Sent is open to any user; **Job Work Manager** is required to move an order through Partially Received, Received, or Closed.
+
+---
+
+## 5. TRACEABILITY & CUTTING FEATURES
+
+### 5.1 Raw Material Batch → Fabric Roll
+1. Log incoming material as a **Raw Material Batch** (supplier, material type, origin, certifications, quality grade, received date).
+2. Create a **Fabric Roll** linked to that batch as it moves through production, capturing production stage, contractor, dimensions, weight, grade, and quality status.
+3. Each processing step can be recorded as a **Process History Entry** row on the roll, building a full genealogy from raw batch to finished roll.
+
+### 5.2 Cutting Plans & Patterns
+1. Define reusable **Pattern Templates**, each made up of individual **Pattern Pieces**.
+2. Create a **Cutting Plan** against a fabric roll or batch, listing planned pieces in **Cutting Plan Item** rows.
+3. Submit the plan once cutting is complete; efficiency (planned vs. actual yield) is available via the **Cutting Efficiency** report.
+
+### 5.3 Loom & Machine Output
+For in-house production, register each **Loom** (by Machine ID) and log daily throughput via **Machine Output Log**, viewable on the **Loom Dashboard** (`/loom-dashboard`) web page.
+
+---
+
+## 6. VENDOR PORTAL & DIGITAL PRODUCT PASSPORT
+
+### 6.1 Digital Product Passport (`/dpp/<roll_id>`)
+A public web page that renders full traceability for a given Fabric Roll: its raw material batch, certifications, job work processes, and process history — suitable for a QR code printed on the finished product. No login is required to view it, so treat the roll ID as effectively public once printed.
+
+### 6.2 Supplier Portal (`/supplier-portal`)
+A self-service page for users with the **Supplier** role:
+- Requires login; shows a message prompting sign-in for guests.
+- Matches the logged-in user to a **Supplier** record by email, then lists all of that supplier's **Vendor Delivery Schedule** rows.
+- Suppliers can revise the **Revised Delivery Date**, update **Status** (Confirmed / Delayed / Shipped), and add **Supplier Notes** directly from the portal.
+
+---
+
+## 7. REPORTS
+
+| Report | Type | Based On | Purpose |
+|---|---|---|---|
+| Contractor Wastage Trend | Query Report | Fabric Wastage Log | Wastage % over time, by contractor |
+| Cutting Efficiency | Script Report | Cutting Plan | Planned vs. actual cutting yield |
+| Lot Genealogy | Script Report | Raw Material Batch | Full batch → roll → job work trace |
+| Overdue Job Work Orders | Query Report | Job Work Order | Orders past their expected return date |
+| True Cost Per Piece by Contractor | Script Report | Job Work Order | Rate + wastage-adjusted true unit cost |
+
+---
+
+## 8. WORKSPACE NAVIGATION
+
+**Shortcuts (top row):**
+- 📦 New Job Work Order
+- 🧵 Fabric Rolls
+- 📥 Raw Material Batch
+- ✂️ Cutting Plan
+
+**Cards:**
+- **Traceability** — Raw Material Batch, Fabric Roll
+- **Production** — Job Work Order, Production Schedule, Machine Output Log
+- **Master Data** — Job Contractor, Loom
+- **Cutting & Waste** — Cutting Plan, Pattern Template, Fabric Wastage Log
+- **Vendor Portal** — Vendor Delivery Schedule
+- **Reports** — Contractor Wastage Trend, True Cost Per Piece by Contractor, Overdue Job Work Orders, Cutting Efficiency, Lot Genealogy
+
+**Chart:**
+- **Wastage Trend Overview** — line chart of wastage over time, sourced from the Contractor Wastage Trend report
+
+---
+
+## 9. SCHEDULED TASKS & AUTOMATION
+
+Three tasks run daily via the Frappe Scheduler:
+
+| Task | What it does |
+|---|---|
+| `daily_update_contractor_wastage_stats` | Recalculates each active Job Contractor's aggregated wastage fields from all their Fabric Wastage Log entries |
+| `daily_check_overdue_job_work_orders` | Scans all open orders for processes past their Expected Return Date and raises a "Process Overdue" notification |
+| `daily_notify_rate_card_expiring` | Flags contractor rate card rows that have been in effect for 90+ days without an update, so rates can be reviewed |
+
+> Make sure the scheduler is enabled on your site: `bench --site your-site.com scheduler enable`
+
+---
+
+## 10. SETUP & CONFIGURATION (FIXTURES)
+
+The following are set up automatically post-install/migrate (via `pre_model_sync` / `post_model_sync` patches):
+
+- **Module Def** — "Textile" module registered against the app
+- **Roles** — Job Work Manager, Contractor Coordinator
+- **Workflow** — Job Work Order Workflow, with its 5 states and 6 transitions
+- **Notifications** — Job Work Overdue Alert (email + system), High Wastage Alert (system, wastage_pct > 15%)
+- **Workspace Chart** — Wastage Trend Overview, linked to the Textile Tracking workspace
+
+Standard Frappe fixtures (Workspace, DocType, Report, Workflow, Workflow State, Workflow Action, Role, Notification — all filtered to this app's module) are also exported for redeployment across sites.
+
+---
+
+## 11. DEMO DATA
+
+Demo data can be seeded via the bench console command:
 
 ```bash
-# 1. Navigate to your Frappe bench directory
-cd ~/frappe-bench
-
-# 2. Get the app (use --skip-assets for Frappe v15 to avoid esbuild ordering issues)
-bench get-app --skip-assets https://github.com/Pasha1234565/textile_tracking.git
-
-# 3. Install the app on your site
-bench --site your-site.local install-app textile_tracking
-
-# 4. Build assets after installation
-bench build
-
-# 5. Run migration to sync everything
-bench --site your-site.local migrate
-
-# 6. Clear cache
-bench --site your-site.local clear-cache
+bench --site your-site.com insert-demo-data
 ```
 
-> **Note for Frappe v15 users**: If you encounter an esbuild error during `bench get-app`, use the `--skip-assets` flag. This is a known Frappe v15 interaction where the asset build runs before the app is registered in `apps.txt`.
-
-### Quick Start (After Installation)
-
-1. Log in to your Frappe site as **Administrator**
-2. Navigate to the **Textile Tracking** workspace
-3. Start by adding **Job Contractors** with rate cards
-4. Create a **Job Work Order** and send fabric for processing
-5. Log returns and wastage when received
-6. Track contractor performance via **Reports**
-
-### Insert Demo Data
-
-```bash
-# Via CLI command
-bench --site your-site.local insert-demo-data
-
-# Or via bench console
-bench --site your-site.local console
-```
-
-```python
-exec(open("../apps/textile_tracking/textile_tracking/commands.py").read())
-insert_demo_data()
-```
+This creates sample **Job Contractors** (with rate cards), **Job Work Orders**, **Fabric Wastage Logs**, **Raw Material Batches**, **Fabric Rolls**, **Looms**, **Pattern Templates**, and **Vendor Deliveries**, enough to explore every workflow above without manual data entry. It also runs automatically once as part of the `add_demo_data` post-model-sync patch on install.
 
 ---
 
-## ⚙️ Configuration
+## 12. TROUBLESHOOTING
 
-### Site Configuration
-
-Ensure your site's `site_config.json` includes:
-```json
-{
-  "host_name": "http://your-domain:8000"
-}
-```
-
-### Stock Integration
-
-For automatic Stock Entry creation on Job Work Orders:
-1. Go to **Stock Settings**
-2. Enable **Allow Material Transfer to Subcontractor**
-3. Set your **Default Warehouse**
+| Issue | Cause | Solution |
+|---|---|---|
+| App not found during install | App not in `apps.txt` | `echo "textile_tracking" >> sites/apps.txt` |
+| `(1054, "Unknown column 'parent' in WHERE")` on a child table | Schema sync didn't create standard child-table columns | Handled automatically post-migrate and on first request; to force it manually run `bench --site your-site.com execute textile_tracking.patches.fix_child_table_parent_columns.execute` |
+| Wastage Trend Overview chart missing from workspace | Chart link wasn't created | `bench --site your-site.com execute textile_tracking.patches.create_wastage_chart.execute` |
+| Job Work Order Workflow / custom roles missing | Patch didn't run (e.g. fresh site restored from backup) | `bench --site your-site.com execute textile_tracking.patches.setup_workflow_notifications.execute` |
+| Scheduled tasks not running | Scheduler disabled | `bench --site your-site.com scheduler enable` |
+| No Stock Entry created on submit/return | Stock module not set up, or no default/available warehouse | Set **Stock Settings → Default Warehouse**, or ensure at least one enabled, non-group Warehouse exists. Check the Error Log for details |
+| Supplier can't see any deliveries in the portal | Their user isn't linked to a Supplier record | Set the **Supplier**'s `email` (or `email_id`) field to match the user's login email |
+| Fixture data not loading | Fixtures not synced | `bench --site your-site.com migrate` |
 
 ---
 
-## 🌐 Web Portals
+## 13. APPENDIX
 
-### Digital Product Passport (`/dpp/<roll_id>`)
-- EU 2027-compliant fabric lifecycle page
-- Full traceability: raw material → production → finished roll
-- QR code generation for physical roll verification
-- Process timeline visualization
-- Certification badges (GOTS, OEKO-TEX, Fair Trade)
-- Publicly accessible with no login required
+### A. Role Permissions
 
-### Factory Floor Dashboard (`/loom-dashboard`)
-- Real-time machine status monitoring
-- Summary stats: running, idle, down/maintenance counts
-- Per-machine metrics with color-coded cards
-- Today's production schedule display
-- Responsive design for shop floor displays
+| Role | Job Contractor | Job Work Order | Fabric Roll / Raw Material Batch | Cutting Plan | Vendor Delivery Schedule | Submit/Amend |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| Job Work Manager | Full Access | Full Access | Full Access | Full Access | Read/Write | ✅ |
+| Contractor Coordinator | Read | Create/Read/Write | Read/Write (Fabric Roll) | — | — | ❌ |
+| Supplier | — | — | — | — | Read/Write | ❌ |
+| System Manager | Full Access | Full Access | Full Access | Full Access | Full Access | ✅ |
 
-### Supplier Collaboration Portal (`/supplier-portal`)
-- Secure login with Frappe authentication
-- Delivery schedule overview per supplier
-- Inline date/status updates
-- Stats dashboard for quick reference
-- Designed for external supplier use
+### B. Key DocType Field Reference
 
----
+#### Job Work Order
+| Field | Type | Notes |
+|---|---|---|
+| Garment Type | Select | Shirt, T-Shirt, Skirt, Saree, Blouse, Kurta, Jeans, Dress, Dupatta, Fabrics (Roll) |
+| Source Item | Link → Item | Optional |
+| Qty Sent | Float | Required |
+| Status | Select | Draft / Sent / Partially Received / Received / Closed, driven by the Workflow |
+| Processes | Table → Job Work Order Process | Contractor, process, rate, and dates live here |
+| Raw Material Batch / Fabric Roll | Link | For traceability |
+| Job Work Returns | Table → Job Work Return | Date received, qty received/rejected/wastage |
+| Total Received Qty / Total Wastage Qty | Float | Read-only, aggregated |
+| Stock Entry Sent / Received | Link → Stock Entry | Read-only, auto-populated |
 
-## 🛠️ Development
+#### Fabric Wastage Log
+| Field | Type | Notes |
+|---|---|---|
+| Job Work Order | Link | Optional |
+| Contractor | Link → Job Contractor | Required, auto-fills from Job Work Order |
+| Date Logged | Date | Required |
+| Qty Sent / Wastage Qty | Float | Required |
+| Wastage % | Percent | Auto-calculated |
+| Wastage Category | Select | Cutting Loss / Contractor Damage / Transit Damage / Quality Reject |
+| Raw Material Batch | Link | Optional, for traceability |
 
-### Setting Up for Development
+### C. Related Documents
+- Frappe Framework Documentation: https://frappeframework.com/docs
+- ERPNext Stock Module: https://docs.erpnext.com/docs/user/manual/en/stock
 
-```bash
-# Get the app in developer mode
-bench get-app --skip-assets https://github.com/Pasha1234565/textile_tracking.git
-
-# Set developer mode
-bench --site your-site.local set-config developer_mode 1
-
-# Install for development
-bench --site your-site.local install-app textile_tracking
-
-# Watch for changes (auto-builds assets)
-bench watch
-```
-
-### Project Structure
-
-```
-textile_tracking/
-├── hooks.py                       # App hooks, fixtures, scheduler, before_request
-├── modules.txt                    # Module registration
-├── patches.txt                    # Migration patch sequence
-├── patches/                       # Migration patches (5 total)
-├── commands.py                    # CLI commands for demo data
-├── textile/                       # Main module directory
-│   ├── api.py                     # Stock transfer/receipt creation
-│   ├── tasks.py                   # Scheduled background jobs (3 daily tasks)
-│   ├── doctype/                   # All 18 DocType definitions
-│   ├── report/                    # 5 Report definitions
-│   └── workspace/                 # Workspace configuration
-└── www/                           # Web pages (3 portals)
-    ├── dpp.html + dpp.py          # Digital Product Passport
-    ├── loom_dashboard.html + .py  # Factory Floor Dashboard
-    └── supplier_portal.html + .py # Supplier Collaboration Portal
-```
-
-### Garment Process Mapping
-
-The app auto-populates processes based on garment type:
-
-| Garment Type | Processes |
-|-------------|-----------|
-| Shirt | Cutting → Stitching → Finishing |
-| T-Shirt | Cutting → Stitching → Finishing |
-| Saree | Cutting → Stitching → Dyeing → Embroidery → Finishing |
-| Jeans | Cutting → Stitching → Dyeing → Finishing |
-| Kurta | Cutting → Stitching → Finishing |
-| Dupatta | Cutting → Dyeing → Finishing |
-| Fabrics (Roll) | Dyeing → Finishing |
-| Dress | Cutting → Stitching → Embroidery → Finishing |
+### D. Repository
+- **Repository:** https://github.com/Pasha1234565/textile_tracking.git
 
 ---
 
-## 📊 Feature Details
-
-### True Cost Per Piece Calculation
-
-The True Cost Per Piece report factors in hidden waste costs:
-
-```python
-True Cost = (Labor Cost + Wastage Cost) / Qty Received
-
-Labor Cost    = Rate Per Piece × Qty Received
-Wastage Cost  = Wastage Qty × Raw Material Valuation Rate
-```
-
-### Fabric Requirement Estimates
-
-Built-in fabric consumption database for 8 garment types × 5 sizes (S-XXL):
-
-```
-Shirt Size M:  1.4 meters per garment
-T-Shirt Size L: 1.2 meters per garment
-Saree: 5.5 meters (all sizes)
-```
-
-### Workflow States & Transitions
-
-```
-Draft ──[Send to Contractor]──▶ Sent
-Sent  ──[Partial Return]──────▶ Partially Received
-Sent  ──[Full Return]─────────▶ Received
-Partially Received ──[Partial Return]──▶ Partially Received
-Partially Received ──[Full Return]─────▶ Received
-Received ──[Close Order]──────▶ Closed
-```
-
----
-
-## 🔧 Troubleshooting
-
-### Common Issues Quick Reference
-
-| Issue | Likely Cause | Solution |
-|-------|-------------|----------|
-| `LinkValidationError` during install | Roles missing | Re-run `install-app` |
-| Child table missing columns (`parent`, `parenttype`, `parentfield`) | Incomplete migration | Run `bench migrate` twice |
-| Reports show blank page | Module Def missing | Run `bench migrate` |
-| Controller resolution error | Stale DocType records | Re-install the app |
-| Workspace blocks broken | Socket.IO disconnected | Clear cache, restart bench |
-| Stock Entry not created | Stock Settings not configured | Enable subcontractor transfer |
-
-### Child Table Fix
-
-If child tables are missing parent columns, the app automatically fixes this via:
-- `before_request` hook (on first HTTP request)
-- `after_migrate` hook (during every `bench migrate`)
-
-### Manual Child Table Repair
-
-```python
-frappe.db.sql("ALTER TABLE `tabContractor Rate Item` ADD COLUMN `parent` varchar(255) DEFAULT NULL")
-frappe.db.sql("ALTER TABLE `tabContractor Rate Item` ADD COLUMN `parenttype` varchar(255) DEFAULT NULL")
-frappe.db.sql("ALTER TABLE `tabContractor Rate Item` ADD COLUMN `parentfield` varchar(255) DEFAULT NULL")
-```
-
----
-
-## 🍃 Design History
-
-| Concept | Implementation |
-|---------|---------------|
-| Multi-process JWO | Each Job Work Order has a child table of processes, each with its own contractor, dates, and status |
-| Garment-specific workflows | Process mapping per garment type auto-populates the processes table |
-| Digital Product Passport | Public web page with QR code, process timeline, and full traceability |
-| True Cost Analytics | Factors in raw material cost of wastage to reveal hidden costs per contractor |
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 📬 Support
-
-- **Email**: info@example.com
-- **Issues**: [GitHub Issues](https://github.com/Pasha1234565/textile_tracking/issues)
-
----
-
-<p align="center">
-  Built with ❤️ for textile manufacturers, one stitch at a time.
-</p>
+*End of README*
