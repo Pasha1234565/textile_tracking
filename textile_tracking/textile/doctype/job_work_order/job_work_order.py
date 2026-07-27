@@ -199,6 +199,36 @@ class JobWorkOrder(Document):
 				contractors.append(p.contractor)
 		return ", ".join(contractors)
 
+
+@frappe.whitelist()
+def get_jwo_child_data(docname):
+	"""Fetch Job Work Order child table data directly from the database.
+
+	This bypasses Frappe's permission/doc-level loading to ensure
+	child table data is always returned to the client form.
+	"""
+	processes = frappe.db.get_all(
+		"Job Work Order Process",
+		filters={"parent": docname, "parenttype": "Job Work Order"},
+		fields=["name", "idx", "process_no", "process_name", "contractor",
+				"date_sent", "expected_return_date", "actual_return_date",
+				"status", "qty_sent", "rate_per_piece", "notes"],
+		order_by="idx asc",
+	)
+
+	returns = frappe.db.get_all(
+		"Job Work Return",
+		filters={"parent": docname, "parenttype": "Job Work Order"},
+		fields=["name", "idx", "date_received", "qty_received",
+				"qty_rejected", "wastage_qty", "wastage_reason"],
+		order_by="idx asc",
+	)
+
+	return {
+		"processes": processes,
+		"job_work_returns": returns,
+	}
+
 	def create_stock_transfer_on_send(self):
 		"""Create Stock Entry for material transfer to subcontractor.
 
