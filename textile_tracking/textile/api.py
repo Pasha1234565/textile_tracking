@@ -1,7 +1,39 @@
 from __future__ import unicode_literals
 
 import frappe
-from frappe.utils import nowdate
+from frappe.utils import nowdate, today
+
+
+def ensure_child_data_on_load(doc, method):
+	"""Ensure child table data is always loaded when a Job Work Order is fetched.
+
+	Frappe's built-in document loading may not include child table data for
+	workflow-enabled documents. This hook runs after the document is loaded
+	and forcibly loads the child table data from the database.
+	"""
+	if doc.get("__islocal") or not doc.name:
+		return
+
+	# Reload processes from database with ALL fields (including name for client-side tracking)
+	processes = frappe.db.get_all(
+		"Job Work Order Process",
+		filters={"parent": doc.name, "parenttype": "Job Work Order"},
+		fields=["*"],
+		order_by="idx asc",
+	)
+
+	# Reload returns from database
+	returns = frappe.db.get_all(
+		"Job Work Return",
+		filters={"parent": doc.name, "parenttype": "Job Work Order"},
+		fields=["*"],
+		order_by="idx asc",
+	)
+
+	# Direct assignment preserves name, idx, parent, and all other columns
+	# that the client-side framework needs to properly render child table rows
+	doc.processes = list(processes)
+	doc.job_work_returns = list(returns)
 
 
 def _get_first_process_contractor(job_work_order):

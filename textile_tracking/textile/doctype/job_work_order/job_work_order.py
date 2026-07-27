@@ -21,32 +21,6 @@ GARMENT_PROCESS_MAP = {
 
 
 class JobWorkOrder(Document):
-	def onload(self):
-		"""Load child table data into __onload for reliable client-side access.
-
-		Frappe's built-in doc loading sometimes fails to include child table data
-		for workflow-enabled documents. This hook ensures process and return data
-		is always available on the client via frm.__onload.
-		"""
-		if not self.get("__islocal") and self.name:
-			processes = frappe.db.get_all(
-				"Job Work Order Process",
-				filters={"parent": self.name, "parenttype": "Job Work Order"},
-				fields=["name", "idx", "process_no", "process_name", "contractor",
-						"date_sent", "expected_return_date", "actual_return_date",
-						"status", "qty_sent", "rate_per_piece", "notes"],
-				order_by="idx asc",
-			)
-			returns = frappe.db.get_all(
-				"Job Work Return",
-				filters={"parent": self.name, "parenttype": "Job Work Order"},
-				fields=["name", "idx", "date_received", "qty_received",
-						"qty_rejected", "wastage_qty", "wastage_reason"],
-				order_by="idx asc",
-			)
-			self.set_onload("processes", processes)
-			self.set_onload("job_work_returns", returns)
-
 	def validate(self):
 		self.auto_populate_processes()
 		self.validate_processes_required()

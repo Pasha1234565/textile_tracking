@@ -5,19 +5,8 @@ frappe.ui.form.on('Job Work Order', {
 		});
 	},
 
-	onload: function(frm) {
-		if (frm.doc.__islocal) return;
-		populate_from_onload(frm);
-	},
-
 	refresh: function(frm) {
 		if (frm.doc.__islocal) return;
-
-		// Try populating from __onload data if grid is still empty
-		var hasData = frm.doc.processes && frm.doc.processes.length > 0;
-		if (!hasData) {
-			populate_from_onload(frm);
-		}
 
 		// Update process numbers if data is loaded
 		if (frm.doc.processes && frm.doc.processes.length > 0) {
@@ -93,47 +82,6 @@ frappe.ui.form.on('Job Work Order Process', {
 		}
 	}
 });
-
-function populate_from_onload(frm) {
-	// Populate processes from __onload data (set by server-side onload hook)
-	if (frm.__onload && frm.__onload.processes && frm.__onload.processes.length > 0) {
-		var needsLoad = !frm.doc.processes || frm.doc.processes.length === 0;
-		if (needsLoad) {
-			frm.doc.processes = [];
-			$.each(frm.__onload.processes, function(i, row) {
-				var child = frappe.model.add_child(frm.doc, 'Job Work Order Process', 'processes');
-				child.process_no = row.process_no || row.idx || (i + 1);
-				child.process_name = row.process_name || '';
-				child.contractor = row.contractor || '';
-				child.date_sent = row.date_sent || '';
-				child.expected_return_date = row.expected_return_date || '';
-				child.actual_return_date = row.actual_return_date || '';
-				child.status = row.status || 'Not Started';
-				child.qty_sent = row.qty_sent || 0;
-				child.rate_per_piece = row.rate_per_piece || 0;
-				child.notes = row.notes || '';
-			});
-			frm.refresh_field('processes');
-		}
-	}
-
-	// Populate returns from __onload
-	if (frm.__onload && frm.__onload.job_work_returns && frm.__onload.job_work_returns.length > 0) {
-		var needsLoad = !frm.doc.job_work_returns || frm.doc.job_work_returns.length === 0;
-		if (needsLoad) {
-			frm.doc.job_work_returns = [];
-			$.each(frm.__onload.job_work_returns, function(i, row) {
-				var child = frappe.model.add_child(frm.doc, 'Job Work Return', 'job_work_returns');
-				child.date_received = row.date_received || '';
-				child.qty_received = row.qty_received || 0;
-				child.qty_rejected = row.qty_rejected || 0;
-				child.wastage_qty = row.wastage_qty || 0;
-				child.wastage_reason = row.wastage_reason || '';
-			});
-			frm.refresh_field('job_work_returns');
-		}
-	}
-}
 
 function refresh_process_numbers(frm) {
 	var rows = frm.doc.processes || [];
