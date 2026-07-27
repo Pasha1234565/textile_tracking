@@ -1,26 +1,19 @@
 frappe.ui.form.on('Job Work Order', {
 	setup: function(frm) {
-		// Make the process grid columns visible and editable after submission
 		frm.set_query('contractor', 'processes', function(doc, cdt, cdn) {
-			return {
-				filters: { 'status': 'Active' }
-			};
+			return { filters: { 'status': 'Active' } };
 		});
 	},
 
-	refresh: function(frm) {
+	onload: function(frm) {
 		if (frm.doc.__islocal) return;
 
-		// If processes are already loaded (length > 0 or has rows), just number them
-		var hasProcesses = frm.doc.processes && frm.doc.processes.length > 0;
-		var hasReturns = frm.doc.job_work_returns && frm.doc.job_work_returns.length > 0;
+		// Check if process data is already loaded (Frappe should do this automatically,
+		// but child table permission issues may prevent it)
+		var needsLoad = !frm.doc.processes || frm.doc.processes.length === 0;
 
-		if (hasProcesses) {
-			refresh_process_numbers(frm);
-		}
-
-		// Only force-load from server if grid is empty (fallback for permission issues)
-		if (!hasProcesses || !hasReturns) {
+		if (needsLoad) {
+			// Fetch full document data from server and populate the grid
 			frappe.call({
 				method: 'frappe.client.get',
 				args: {
@@ -30,11 +23,18 @@ frappe.ui.form.on('Job Work Order', {
 				callback: function(r) {
 					if (!r.message) return;
 
-					// Load processes if empty
-					if (!hasProcesses && r.message.processes && r.message.processes.length > 0) {
-						frm.clear_table('processes');
-						$.each(r.message.processes, function(i, row) {
-							var child = frm.add_child('processes');
+					var processes = r.message.processes || [];
+					var returns = r.message.job_work_returns || [];
+
+					// Only update if the grid is still empty (avoid race conditions)
+					var stillEmpty = !frm.doc.processes || frm.doc.processes.length === 0;
+					var returnsEmpty = !frm.doc.job_work_returns || frm.doc.job_work_returns.length === 0;
+
+					if (stillEmpty && processes.length > 0) {
+						// Direct assignment to avoid triggering change handlers during load
+						frm.doc.processes = [];
+						$.each(processes, function(i, row) {
+							var child = frappe.model.add_child(frm.doc, 'Job Work Order Process', 'processes');
 							child.process_no = row.process_no || (i + 1);
 							child.process_name = row.process_name || '';
 							child.contractor = row.contractor || '';
@@ -46,25 +46,35 @@ frappe.ui.form.on('Job Work Order', {
 							child.rate_per_piece = row.rate_per_piece || 0;
 							child.notes = row.notes || '';
 						});
-						refresh_field('processes');
-						refresh_process_numbers(frm);
+						frm.refresh_field('processes');
 					}
 
-					// Load returns if empty
-					if (!hasReturns && r.message.job_work_returns && r.message.job_work_returns.length > 0) {
-						frm.clear_table('job_work_returns');
-						$.each(r.message.job_work_returns, function(i, row) {
-							var child = frm.add_child('job_work_returns');
+					if (returnsEmpty && returns.length > 0) {
+						frm.doc.job_work_returns = [];
+						$.each(returns, function(i, row) {
+							var child = frappe.model.add_child(frm.doc, 'Job Work Return', 'job_work_returns');
 							child.date_received = row.date_received || '';
 							child.qty_received = row.qty_received || 0;
 							child.qty_rejected = row.qty_rejected || 0;
 							child.wastage_qty = row.wastage_qty || 0;
 							child.wastage_reason = row.wastage_reason || '';
 						});
-						refresh_field('job_work_returns');
+						frm.refresh_field('job_work_returns');
 					}
+				},
+				error: function(err) {
+					console.error('Failed to load JWO child table data:', err);
 				}
 			});
+		}
+	},
+
+	refresh: function(frm) {
+		if (frm.doc.__islocal) return;
+
+		// On every refresh, update process numbers if data is loaded
+		if (frm.doc.processes && frm.doc.processes.length > 0) {
+			refresh_process_numbers(frm);
 		}
 	},
 
@@ -80,7 +90,6 @@ frappe.ui.form.on('Job Work Order', {
 // Process grid events
 frappe.ui.form.on('Job Work Order Process', {
 	processes_add: function(frm, cdt, cdn) {
-		// Auto-assign process number for new row
 		var row = locals[cdt][cdn];
 		var max_no = 0;
 		$.each(frm.doc.processes || [], function(i, p) {
@@ -147,11 +156,7 @@ frappe.ui.form.on('Job Work Order Process', {
 function refresh_process_numbers(frm) {
 	var rows = frm.doc.processes || [];
 	$.each(rows, function(i, p) {
-		if (p.name) {
-			frappe.model.set_value(p.doctype, p.name, 'process_no', i + 1);
-		} else {
-			p.process_no = i + 1;
-		}
+		p.process_no = i + 1;
 	});
 	if (rows.length > 0) {
 		refresh_field('processes');
