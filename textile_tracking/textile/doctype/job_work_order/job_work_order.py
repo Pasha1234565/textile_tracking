@@ -136,19 +136,19 @@ class JobWorkOrder(Document):
 				continue
 
 			child_table = frappe.unscrub(table_field.options)
+			# Use dynamic placeholders for the IN clause — Frappe's MySQL driver
+			# doesn't reliably convert a Python list for %(names)s syntax.
+			placeholders = ",".join(["%s"] * len(names))
+			params = [self.name, self.doctype, table_field.fieldname] + names
 			try:
-				frappe.db.sql("""
-					UPDATE `tab{child_table}`
-					SET parent = %(parent)s,
-						parenttype = %(parenttype)s,
-						parentfield = %(parentfield)s
-					WHERE name IN %(names)s
-				""".format(child_table=child_table), {
-					"parent": self.name,
-					"parenttype": self.doctype,
-					"parentfield": table_field.fieldname,
-					"names": names,
-				})
+				frappe.db.sql(
+					f"""UPDATE `tab{child_table}`
+						SET parent = %s,
+							parenttype = %s,
+							parentfield = %s
+						WHERE name IN ({placeholders})""",
+					params,
+				)
 			except Exception:
 				frappe.log_error(
 					frappe.get_traceback(),
