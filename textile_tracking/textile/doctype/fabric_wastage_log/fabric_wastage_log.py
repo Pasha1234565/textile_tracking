@@ -18,7 +18,12 @@ class FabricWastageLog(Document):
 		update_contractor_wastage_stats(self.contractor)
 
 	def _auto_calculate_wastage_from_jwo(self):
-		"""Calculate wastage_qty = qty_sent - total_qty_received from linked JWO."""
+		"""Calculate wastage_qty = qty_sent - total_qty_received from linked JWO.
+
+		Only calculates when returns actually exist to avoid overriding the
+		initial placeholder (wastage_qty=0) on submission before any returns
+		are recorded.
+		"""
 		if not self.job_work_order:
 			return
 
@@ -28,6 +33,10 @@ class FabricWastageLog(Document):
 			filters={"parent": self.job_work_order, "parenttype": "Job Work Order"},
 			fields=["qty_received"],
 		)
+
+		# Don't calculate if no returns exist yet (keep initial wastage_qty=0)
+		if not returns:
+			return
 
 		total_received = sum(flt(r.qty_received) for r in returns)
 		calculated_wastage = max(flt(self.qty_sent) - total_received, 0)

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import today, flt
+from frappe.utils import today
 
 
 # Mapping: Garment Type -> List of processes (in order)
